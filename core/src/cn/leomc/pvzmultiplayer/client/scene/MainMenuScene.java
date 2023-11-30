@@ -1,6 +1,6 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
-import cn.leomc.pvzmultiplayer.client.logic.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -78,8 +78,7 @@ public class MainMenuScene extends BaseScene {
     }
 
     public void host() {
-        ClientGameManager.get().host();
-        setScene(new LobbyScene());
+        runLater(() -> ClientGameManager.get().host());
     }
 
     public void join() {

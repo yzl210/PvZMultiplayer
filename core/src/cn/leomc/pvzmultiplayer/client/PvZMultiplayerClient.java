@@ -1,8 +1,8 @@
 package cn.leomc.pvzmultiplayer.client;
 
-import cn.leomc.pvzmultiplayer.client.logic.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.scene.MainMenuScene;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.ApplicationLogger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,7 +15,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class PvZMultiplayerClient extends ApplicationAdapter {
+    public static ApplicationLogger LOGGER;
 
     private static PvZMultiplayerClient INSTANCE;
 
@@ -26,8 +30,9 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     private Viewport viewport;
 
     private final ClientGameManager gameManager = new ClientGameManager();
-
     private final SceneManager sceneManager = new SceneManager();
+
+    private final Queue<Runnable> tasksQueue = new ConcurrentLinkedQueue<>();
 
     public PvZMultiplayerClient() {
         INSTANCE = this;
@@ -35,6 +40,7 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
 
     @Override
     public void create() {
+        LOGGER = Gdx.app.getApplicationLogger();
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("skins/freezing/freezing-ui.json"));
         font = generateFont();
@@ -53,9 +59,10 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
 
     @Override
     public void render() {
+        while (!tasksQueue.isEmpty())
+            tasksQueue.poll().run();
         ScreenUtils.clear(0, 0, 0, 1);
         sceneManager.render();
-        sceneManager.tick();
         Gdx.graphics.setTitle(sceneManager.getTitle());
     }
 
@@ -63,6 +70,10 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         font.dispose();
+    }
+
+    public void runLater(Runnable runnable) {
+        tasksQueue.add(runnable);
     }
 
     public SpriteBatch getBatch() {

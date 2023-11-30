@@ -1,6 +1,8 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
+import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
+import cn.leomc.pvzmultiplayer.client.SceneManager;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -49,7 +51,11 @@ public interface Scene extends InputProcessor {
     }
 
     default void setScene(Scene scene) {
-        PvZMultiplayerClient.getInstance().getSceneManager().setScene(scene);
+        SceneManager.get().setScene(scene);
+    }
+
+    default void runLater(Runnable runnable) {
+        ClientGameManager.get().runLater(runnable);
     }
 
 }

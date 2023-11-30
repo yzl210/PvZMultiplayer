@@ -1,0 +1,47 @@
+package cn.leomc.pvzmultiplayer.common.networking;
+
+import cn.leomc.pvzmultiplayer.common.networking.packet.*;
+import io.netty.buffer.ByteBuf;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+public class PacketManager {
+
+    private static final Map<Integer, PacketInfo<?>> packetsById = new HashMap<>();
+    private static final Map<Class<?>, PacketInfo<?>> packetsByClass = new HashMap<>();
+
+
+    public static <T extends Packet> void register(Class<T> packetClass, Function<ByteBuf, T> deserializer) {
+        PacketInfo<T> packetInfo = new PacketInfo<>(packetsById.size(), packetClass, deserializer);
+        packetsById.put(packetInfo.id, packetInfo);
+        packetsByClass.put(packetClass, packetInfo);
+    }
+
+    record PacketInfo<T extends Packet>(int id, Class<T> packetClass, Function<ByteBuf, T> deserializer) {
+    }
+
+    public static int getId(Packet packet) {
+        PacketInfo<?> packetInfo = packetsByClass.get(packet.getClass());
+        if (packetInfo == null)
+            throw new IllegalArgumentException("Unknown packet class " + packet.getClass());
+        return packetInfo.id();
+    }
+
+    public static Packet getPacket(int id, ByteBuf buf) {
+        PacketInfo<?> packetInfo = packetsById.get(id);
+        if (packetInfo == null)
+            throw new IllegalArgumentException("Unknown packet id " + id);
+        return packetInfo.deserializer().apply(buf);
+    }
+
+    static {
+        register(ServerboundJoinPacket.class, ServerboundJoinPacket::new);
+        register(ClientboundJoinPacket.class, ClientboundJoinPacket::new);
+        register(ClientboundGameStatePacket.class, ClientboundGameStatePacket::new);
+        register(ClientboundPlayerListPacket.class, ClientboundPlayerListPacket::new);
+        register(ClientboundSettingsPacket.class, ClientboundSettingsPacket::new);
+    }
+
+}

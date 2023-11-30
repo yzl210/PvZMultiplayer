@@ -7,7 +7,7 @@ public interface Component {
         return new TextComponent(text);
     }
 
-    static Component translatable(String key) {
-        return new TranslatableComponent(key);
+    static Component translatable(String key, Component... args) {
+        return new TranslatableComponent(key, args);
     }
 }

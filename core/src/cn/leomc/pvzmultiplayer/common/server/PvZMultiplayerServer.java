@@ -1,15 +1,15 @@
 package cn.leomc.pvzmultiplayer.common.server;
 
-import cn.leomc.pvzmultiplayer.common.Constants;
+import cn.leomc.pvzmultiplayer.common.EventLoop;
+import cn.leomc.pvzmultiplayer.common.game.GameManager;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-public class PvZMultiplayerServer {
+public class PvZMultiplayerServer extends EventLoop {
 
     private static PvZMultiplayerServer INSTANCE;
 
-    private final Queue<Runnable> tasksQueue = new ConcurrentLinkedQueue<>();
+    private Thread serverThread;
+    private ServerManager serverManager;
+    private final GameManager gameManager = new GameManager();
 
     public static void start() {
         if (INSTANCE != null)
@@ -17,31 +17,37 @@ public class PvZMultiplayerServer {
 
         INSTANCE = new PvZMultiplayerServer();
 
-        new Thread(() -> {
-            try {
-                INSTANCE.loop();
-            } catch (Throwable t) {
-                t.printStackTrace();
-                System.exit(-1);
-            }
-        }, "Server Thread").start();
-
+        INSTANCE.serverThread = INSTANCE.createThread("Server Thread");
+        INSTANCE.serverThread.start();
     }
 
-    public void loop() {
-        while (true) {
-            long start = System.nanoTime();
-            tick();
-            long end = System.nanoTime();
-            long sleep = 1000000000 / Constants.TPS - (end - start);
-            while (System.nanoTime() - end < sleep)
-                Thread.onSpinWait();
+    public static void waitForStart() {
+        while (INSTANCE == null || INSTANCE.serverManager == null || !INSTANCE.serverManager.isRunning()) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
+    @Override
     public void tick() {
-        while (!tasksQueue.isEmpty())
-            tasksQueue.poll().run();
+        if (serverManager == null)
+            serverManager = new ServerManager();
+        gameManager.tick();
+        super.tick();
+    }
+
+    public ServerManager getServerManager() {
+        return serverManager;
+    }
+
+    public GameManager getGameManager() {
+        return gameManager;
+    }
+
+    public static PvZMultiplayerServer getInstance() {
+        return INSTANCE;
     }
 
 }

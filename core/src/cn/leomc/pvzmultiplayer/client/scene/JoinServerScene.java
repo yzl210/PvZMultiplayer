@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
-import cn.leomc.pvzmultiplayer.client.logic.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -50,7 +51,6 @@ public class JoinServerScene extends BaseScene {
 
 
         errorLabel = new Label("", getSkin());
-        errorLabel.setColor(Color.RED);
         errorLabel.setFontScale(1.5f);
         stage.addActor(errorLabel);
     }
@@ -86,18 +86,34 @@ public class JoinServerScene extends BaseScene {
     }
 
     private void connect() {
-        if (addressField.getText().isBlank())
-            errorLabel.setText("Please enter a valid server address");
+        if (addressField.getText().isBlank()) {
+            setErrorMessage(Component.translatable("Please enter a server address"));
+            return;
+        }
+
+        setMessage(Component.translatable("Connecting..."));
+
+        runLater(() -> {
+            try {
+                ClientGameManager.get().connect(addressField.getText());
+            } catch (Exception e) {
+                e.printStackTrace();
+                PvZMultiplayerClient.getInstance()
+                        .runLater(() -> setErrorMessage(Component.translatable("Failed to connect to server: " + e.getMessage())));
+            }
+        });
+    }
+
+    public void setMessage(Component message) {
+        errorLabel.setText(message.get());
         errorLabel.setSize(errorLabel.getPrefWidth(), errorLabel.getPrefHeight());
         errorLabel.setPosition(stage.getWidth() / 2f - errorLabel.getWidth() / 2f, 100);
-
-        try {
-            ClientGameManager.get().connect(addressField.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorLabel.setText("Failed to connect to server: " + e.getMessage());
-            errorLabel.setSize(errorLabel.getPrefWidth(), errorLabel.getPrefHeight());
-            errorLabel.setPosition(stage.getWidth() / 2f - errorLabel.getWidth() / 2f, 100);
-        }
+        errorLabel.setColor(Color.BLACK);
     }
+
+    public void setErrorMessage(Component message) {
+        setMessage(message);
+        errorLabel.setColor(Color.RED);
+    }
+
 }

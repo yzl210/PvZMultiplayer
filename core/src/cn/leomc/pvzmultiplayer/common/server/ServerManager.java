@@ -3,6 +3,7 @@ package cn.leomc.pvzmultiplayer.common.server;
 import cn.leomc.pvzmultiplayer.common.Constants;
 import cn.leomc.pvzmultiplayer.common.networking.ChannelInitializer;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
+import cn.leomc.pvzmultiplayer.common.server.networking.ServerConnectionHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -14,16 +15,16 @@ import io.netty.handler.logging.LoggingHandler;
 public class ServerManager {
 
     private final Channel serverChannel;
+    private final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     private final PlayerList playerList = new PlayerList();
 
     public ServerManager() {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
         ServerBootstrap b = new ServerBootstrap();
         serverChannel = b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new ChannelInitializer())
+                .childHandler(new ChannelInitializer(new ServerConnectionHandler()))
                 .bind(Constants.PORT)
                 .syncUninterruptibly()
                 .channel();
@@ -35,6 +36,8 @@ public class ServerManager {
 
     public void stop() {
         serverChannel.close();
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
     }
 
     public void sendPacket(Packet packet) {

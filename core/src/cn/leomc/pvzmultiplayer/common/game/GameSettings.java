@@ -19,6 +19,4 @@ public class GameSettings {
         COLLABORATIVE,
         COMPETITIVE,
     }
-
-
 }

@@ -35,9 +35,11 @@ public record ServerboundJoinPacket(String name) implements Packet {
                 channel.close();
                 return;
             }
+
             channel.writeAndFlush(new ClientboundJoinPacket(true, Component.translatable("Success")));
             ServerPlayer player = ServerManager.get().getPlayerList().addPlayer(channel, name);
             player.sendPacket(new ClientboundGameStatePacket(GameManager.get().getState()));
+            player.sendPacket(new ClientboundGameSettingsPacket(GameManager.get().getSettings()));
         });
 
     }

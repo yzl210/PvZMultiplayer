@@ -30,6 +30,13 @@ public class PlayerList {
         syncPlayers();
     }
 
+
+    public void removePlayer(Channel channel) {
+        players.remove(channel);
+        channel.close();
+        syncPlayers();
+    }
+
     public ServerPlayer getPlayer(Channel channel) {
         return players.get(channel);
     }

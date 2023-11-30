@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.networking;
 
 import cn.leomc.pvzmultiplayer.common.Constants;
+import cn.leomc.pvzmultiplayer.common.networking.ChannelInitializer;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -16,7 +17,7 @@ public class ClientConnection {
         Bootstrap bootstrap = new Bootstrap();
         channel = bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                .handler(new ClientChannelInitializer())
+                .handler(new ChannelInitializer(new ClientConnectionHandler()))
                 .connect(address, Constants.PORT)
                 .syncUninterruptibly()
                 .channel();

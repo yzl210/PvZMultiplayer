@@ -41,7 +41,8 @@ public class PacketManager {
         register(ClientboundJoinPacket.class, ClientboundJoinPacket::new);
         register(ClientboundGameStatePacket.class, ClientboundGameStatePacket::new);
         register(ClientboundPlayerListPacket.class, ClientboundPlayerListPacket::new);
-        register(ClientboundSettingsPacket.class, ClientboundSettingsPacket::new);
+        register(ClientboundGameSettingsPacket.class, ClientboundGameSettingsPacket::new);
+        register(ServerboundGameSettingsPacket.class, ServerboundGameSettingsPacket::new);
     }
 
 }

@@ -30,6 +30,15 @@ public class PvZMultiplayerServer extends EventLoop {
         }
     }
 
+    public static void stop() {
+        if (INSTANCE == null)
+            return;
+
+        INSTANCE.serverManager.stop();
+        INSTANCE.serverThread.interrupt();
+        INSTANCE = null;
+    }
+
     @Override
     public void tick() {
         if (serverManager == null)

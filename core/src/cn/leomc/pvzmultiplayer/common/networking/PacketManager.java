@@ -14,6 +14,8 @@ public class PacketManager {
 
 
     public static <T extends Packet> void register(Class<T> packetClass, Function<ByteBuf, T> deserializer) {
+        if(packetsByClass.containsKey(packetClass))
+            throw new IllegalArgumentException("Packet class " + packetClass + " is already registered");
         PacketInfo<T> packetInfo = new PacketInfo<>(packetsById.size(), packetClass, deserializer);
         packetsById.put(packetInfo.id, packetInfo);
         packetsByClass.put(packetClass, packetInfo);
@@ -43,6 +45,8 @@ public class PacketManager {
         register(ClientboundPlayerListPacket.class, ClientboundPlayerListPacket::new);
         register(ClientboundGameSettingsPacket.class, ClientboundGameSettingsPacket::new);
         register(ServerboundGameSettingsPacket.class, ServerboundGameSettingsPacket::new);
+        register(ClientboundGameStartPacket.class, ClientboundGameStartPacket::new);
+        register(ServerboundStartGamePacket.class, ServerboundStartGamePacket::new);
     }
 
 }

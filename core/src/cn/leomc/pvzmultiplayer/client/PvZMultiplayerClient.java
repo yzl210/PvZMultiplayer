@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client;
 
 import cn.leomc.pvzmultiplayer.client.scene.MainMenuScene;
+import cn.leomc.pvzmultiplayer.common.server.PvZMultiplayerServer;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationLogger;
 import com.badlogic.gdx.Gdx;
@@ -68,8 +69,11 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        ClientGameManager.get().disconnect();
+        PvZMultiplayerServer.stop();
         batch.dispose();
         font.dispose();
+        System.exit(0);
     }
 
     public void runLater(Runnable runnable) {

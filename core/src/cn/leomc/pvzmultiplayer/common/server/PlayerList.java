@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.server;
 
+import cn.leomc.pvzmultiplayer.common.game.GameManager;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundPlayerListPacket;
 import io.netty.channel.Channel;
@@ -21,17 +22,16 @@ public class PlayerList {
         ServerPlayer player = new ServerPlayer(name, channel);
         players.put(channel, player);
         syncPlayers();
+        GameManager.get().onAddPlayer(player);
         return player;
     }
 
     public void removePlayer(ServerPlayer player) {
-        players.remove(player.channel());
-        player.channel().close();
-        syncPlayers();
+        removePlayer(player.channel());
     }
 
-
     public void removePlayer(Channel channel) {
+        GameManager.get().onRemovePlayer(getPlayer(channel));
         players.remove(channel);
         channel.close();
         syncPlayers();

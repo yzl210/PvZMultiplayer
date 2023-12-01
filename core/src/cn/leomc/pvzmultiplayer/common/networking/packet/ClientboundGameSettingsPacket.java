@@ -20,12 +20,13 @@ public class ClientboundGameSettingsPacket implements Packet {
 
 
     public ClientboundGameSettingsPacket(ByteBuf buf) {
-        this(new GameSettings());
-        settings.read(buf);
+        GameSettings.GameMode mode = GameSettings.GameMode.values()[buf.readInt()];
+        settings = mode.read(buf);
     }
 
     @Override
     public void write(ByteBuf buf) {
+        buf.writeInt(settings.mode().ordinal());
         settings.write(buf);
     }
 
@@ -33,10 +34,11 @@ public class ClientboundGameSettingsPacket implements Packet {
     public void handle(ChannelHandlerContext ctx) {
         runLaterClient(() -> {
             ClientGameManager.get().setGameSettings(settings);
-            PvZMultiplayerClient.getInstance().runLater(() -> {
-                if (SceneManager.get().getCurrentScene() instanceof LobbyScene scene)
-                    scene.refreshSettings();
-            });
+            ClientGameManager.get().reloadGameSettings();
+//            PvZMultiplayerClient.getInstance().runLater(() -> {
+//                if (SceneManager.get().getCurrentScene() instanceof LobbyScene scene)
+//                    scene.refreshSettings();
+//            });
         });
     }
 }

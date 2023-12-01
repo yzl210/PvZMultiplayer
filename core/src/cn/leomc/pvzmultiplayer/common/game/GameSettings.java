@@ -1,22 +1,49 @@
 package cn.leomc.pvzmultiplayer.common.game;
 
+import cn.leomc.pvzmultiplayer.common.game.logic.collaborative.CollaborativeGameSettings;
+import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
+import cn.leomc.pvzmultiplayer.common.server.ServerPlayer;
+import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import io.netty.buffer.ByteBuf;
 
-public class GameSettings {
+public interface GameSettings {
 
-    public GameMode mode = GameMode.COLLABORATIVE;
+    GameMode mode();
 
+    boolean canStart();
+    void write(ByteBuf buf);
 
-    public void write(ByteBuf buf) {
-        buf.writeInt(mode.ordinal());
+    default void onAddPlayer(ServerPlayer player) {
     }
 
-    public void read(ByteBuf buf) {
-        mode = GameMode.values()[buf.readInt()];
+    default void onRemovePlayer(ServerPlayer player) {
     }
 
-    public enum GameMode {
+    enum GameMode {
         COLLABORATIVE,
-        COMPETITIVE,
+        COMPETITIVE;
+
+        public GameSettings createSettings() {
+            return switch (this) {
+                case COLLABORATIVE -> new CollaborativeGameSettings();
+                case COMPETITIVE -> new CompetitiveGameSettings();
+            };
+        }
+
+        public GameSettings read(ByteBuf buf) {
+            return switch (this) {
+                case COLLABORATIVE -> new CollaborativeGameSettings(buf);
+                case COMPETITIVE -> new CompetitiveGameSettings(buf);
+            };
+        }
+
+        public Component getDisplayName() {
+            return switch (this) {
+                case COLLABORATIVE -> Component.translatable("Collaborative");
+                case COMPETITIVE -> Component.translatable("Competitive");
+            };
+        }
+
     }
+
 }

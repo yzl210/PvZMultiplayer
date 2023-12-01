@@ -1,12 +1,12 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
+import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 
-public class GameScene extends BaseScene {
+public class CollaborativeGameScene extends BaseScene {
 
-    @Override
-    public Component getTitle() {
-        return Component.translatable("");
+
+    public CollaborativeGameScene() {
     }
 
     @Override
@@ -28,4 +28,11 @@ public class GameScene extends BaseScene {
     public void dispose() {
 
     }
+
+
+    @Override
+    public Component getTitle() {
+        return GameSettings.GameMode.COLLABORATIVE.getDisplayName();
+    }
+
 }

@@ -1,12 +1,15 @@
 package cn.leomc.pvzmultiplayer.client;
 
 import cn.leomc.pvzmultiplayer.client.networking.ClientConnection;
-import cn.leomc.pvzmultiplayer.client.scene.GameScene;
+import cn.leomc.pvzmultiplayer.client.scene.CollaborativeGameScene;
+import cn.leomc.pvzmultiplayer.client.scene.CompetitiveGameScene;
 import cn.leomc.pvzmultiplayer.client.scene.LobbyScene;
 import cn.leomc.pvzmultiplayer.client.scene.MainMenuScene;
 import cn.leomc.pvzmultiplayer.common.EventLoop;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.GameState;
+import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
+import cn.leomc.pvzmultiplayer.common.game.logic.competitive.Team;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ServerboundGameSettingsPacket;
 import cn.leomc.pvzmultiplayer.common.server.PvZMultiplayerServer;
 
@@ -21,7 +24,7 @@ public class ClientGameManager extends EventLoop {
     private boolean isHost = false;
 
     private boolean initialized = false;
-    private GameSettings gameSettings = new GameSettings();
+    private GameSettings gameSettings;
     private GameState state;
     private List<String> playerList;
 
@@ -91,7 +94,6 @@ public class ClientGameManager extends EventLoop {
 
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
-        System.out.println("Initialized");
     }
 
     public GameState getState() {
@@ -100,12 +102,13 @@ public class ClientGameManager extends EventLoop {
 
     public void changeState(GameState state) {
         this.state = state;
-        PvZMultiplayerClient.getInstance().runLater(() -> {
-            switch (state) {
-                case LOBBY -> SceneManager.get().setScene(new LobbyScene());
-                case IN_GAME -> SceneManager.get().setScene(new GameScene());
+        if (state == GameState.LOBBY)
+            PvZMultiplayerClient.getInstance().runLater(() -> SceneManager.get().setScene(new LobbyScene()));
+        if (state == GameState.IN_GAME)
+            switch (gameSettings.mode()) {
+                case COLLABORATIVE -> startCollaborativeGame();
+                case COMPETITIVE -> startCompetitiveGame(((CompetitiveGameSettings) gameSettings).getTeam(name));
             }
-        });
     }
 
     public void setPlayerList(List<String> playerList) {
@@ -120,12 +123,28 @@ public class ClientGameManager extends EventLoop {
         this.gameSettings = gameSettings;
     }
 
+    public void reloadGameSettings() {
+        PvZMultiplayerClient.getInstance().runLater(() -> {
+            if (SceneManager.get().getCurrentScene() instanceof LobbyScene scene)
+                scene.refresh();
+        });
+    }
+
+
     public GameSettings getGameSettings() {
         return gameSettings;
     }
 
     public void sendGameSettings() {
         connection.sendPacket(new ServerboundGameSettingsPacket(gameSettings));
+    }
+
+    public void startCollaborativeGame() {
+        PvZMultiplayerClient.getInstance().runLater(() -> SceneManager.get().setScene(new CollaborativeGameScene()));
+    }
+
+    public void startCompetitiveGame(Team team) {
+        PvZMultiplayerClient.getInstance().runLater(() -> SceneManager.get().setScene(new CompetitiveGameScene(team)));
     }
 
 }

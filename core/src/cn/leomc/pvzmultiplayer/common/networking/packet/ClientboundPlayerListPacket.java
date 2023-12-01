@@ -40,7 +40,7 @@ public class ClientboundPlayerListPacket implements Packet {
             ClientGameManager.get().setPlayerList(players);
             PvZMultiplayerClient.getInstance().runLater(() -> {
                 if (SceneManager.get().getCurrentScene() instanceof LobbyScene scene)
-                    scene.refreshPlayerList();
+                    scene.refresh();
             });
         });
     }

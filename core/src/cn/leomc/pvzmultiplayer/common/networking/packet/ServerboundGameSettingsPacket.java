@@ -8,24 +8,26 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class ServerboundGameSettingsPacket implements Packet {
 
-    private GameSettings gameSettings;
+    private final GameSettings settings;
 
-    public ServerboundGameSettingsPacket(GameSettings gameSettings) {
-        this.gameSettings = gameSettings;
+
+    public ServerboundGameSettingsPacket(GameSettings settings) {
+        this.settings = settings;
     }
 
+
     public ServerboundGameSettingsPacket(ByteBuf buf) {
-        this(new GameSettings());
-        gameSettings.read(buf);
+        GameSettings.GameMode mode = GameSettings.GameMode.values()[buf.readInt()];
+        settings = mode.read(buf);
     }
 
     @Override
     public void write(ByteBuf buf) {
-        gameSettings.write(buf);
+        buf.writeInt(settings.mode().ordinal());
+        settings.write(buf);
     }
-
     @Override
     public void handle(ChannelHandlerContext ctx) {
-        runLaterServer(() -> GameManager.get().setSettings(gameSettings));
+        runLaterServer(() -> GameManager.get().setSettings(settings));
     }
 }

@@ -25,14 +25,16 @@ public record ServerboundJoinPacket(String name) implements Packet {
     public void handle(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
         runLaterServer(() -> {
-            if (ServerManager.get().getPlayerList().getPlayer(channel) != null) {
-                channel.writeAndFlush(new ClientboundJoinPacket(false, Component.translatable("You are already connected!")));
+            if (ServerManager.get().getPlayerList().getPlayer(channel) != null)
+                return;
+
+            if (ServerManager.get().getPlayerList().getPlayer(name) != null) {
+                fail(channel, Component.translatable("This name is taken!"));
                 return;
             }
 
-            if (ServerManager.get().getPlayerList().getPlayer(name) != null) {
-                channel.writeAndFlush(new ClientboundJoinPacket(false, Component.translatable("This name is taken!")));
-                channel.close();
+            if (!GameManager.get().getState().canJoin()) {
+                fail(channel, Component.translatable("The game has already started!"));
                 return;
             }
 
@@ -41,6 +43,11 @@ public record ServerboundJoinPacket(String name) implements Packet {
             player.sendPacket(new ClientboundGameStatePacket(GameManager.get().getState()));
             player.sendPacket(new ClientboundGameSettingsPacket(GameManager.get().getSettings()));
         });
-
     }
+
+    private void fail(Channel channel, Component reason) {
+        channel.writeAndFlush(new ClientboundJoinPacket(false, reason));
+        channel.close();
+    }
+
 }

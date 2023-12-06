@@ -1,8 +1,11 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.plants;
 
 import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
+import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
+import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityBuilder;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.EnumMap;
 import java.util.function.Supplier;
@@ -13,7 +16,7 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
 
     int seedRechargeTicks();
 
-    AnimatedTexture texture(PlantState state);
+    Renderable texture(PlantState state);
 
     static <T extends Plant> PlantBuilder<T> builder() {
         return new PlantBuilder<>();
@@ -22,11 +25,15 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
     class PlantBuilder<T extends Plant> extends EntityBuilder<PlantBuilder<T>, T, PlantType<T>, PlantContext> {
         private int sun;
         private int seedRechargeTicks;
-        private final EnumMap<PlantState, Supplier<AnimatedTexture>> textures = new EnumMap<>(PlantState.class);
+        private final EnumMap<PlantState, Supplier<Renderable>> textures = new EnumMap<>(PlantState.class);
+
+        public PlantBuilder() {
+            dimension = new Vector2(80, 80);
+        }
 
         @Override
         public PlantBuilder<T> id(String id) {
-            return super.id("plant:" + id);
+            return super.id(id);
         }
 
         public PlantBuilder<T> sun(int cost) {
@@ -39,7 +46,14 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
             return this;
         }
 
-        public PlantBuilder<T> texture(PlantState state, Supplier<AnimatedTexture> texture) {
+        public PlantBuilder<T> texture(PlantState state, int frames) {
+            String path = "plants/" + id + "/" + state.name().toLowerCase() + ".png";
+            if (frames < 2)
+                return texture(state, () -> FixedTexture.of(path));
+            return texture(state, () -> new AnimatedTexture(path, frames));
+        }
+
+        public PlantBuilder<T> texture(PlantState state, Supplier<Renderable> texture) {
             this.textures.put(state, texture);
             return this;
         }
@@ -58,12 +72,12 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
                 }
 
                 @Override
-                public AnimatedTexture texture(PlantState state) {
+                public Renderable texture(PlantState state) {
                     return textures.get(state).get();
                 }
 
                 @Override
-                public AnimatedTexture texture() {
+                public Renderable texture() {
                     return texture(PlantState.IDLE);
                 }
 

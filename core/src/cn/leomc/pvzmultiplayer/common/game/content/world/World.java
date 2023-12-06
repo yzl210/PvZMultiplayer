@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.game.content.world;
 
+import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
@@ -69,10 +70,13 @@ public class World {
 
 
     public void addEntity(Entity entity) {
-        if (!entities.containsKey(entity.id()))
+        if (!entities.containsKey(entity.id())) {
+            if (isClient())
+                entity.loadResources();
             entities.put(entity.id(), entity);
-        if (isServer())
-            ServerManager.get().sendPacket(new ClientboundAddEntityPacket(entity));
+            if (isServer())
+                ServerManager.get().getPlayerList().sendPacket(new ClientboundAddEntityPacket(entity));
+        }
     }
 
     public Entity getEntity(int id) {
@@ -81,10 +85,6 @@ public class World {
 
 
     public void removeEntity(Entity entity) {
-        entities.remove(entity.id());
-    }
-
-    public void remove(Entity entity) {
         entities.remove(entity.id());
     }
 
@@ -132,6 +132,14 @@ public class World {
 
     private boolean isServer() {
         return PvZMultiplayerServer.getInstance() != null && Thread.currentThread().equals(PvZMultiplayerServer.getInstance().getServerThread());
+    }
+
+    private boolean isClient() {
+        return Thread.currentThread().equals(ClientGameManager.get().getClientTickThread());
+    }
+
+    private boolean isRenderThread() {
+        return Thread.currentThread().equals(PvZMultiplayerClient.getRenderThread());
     }
 
 }

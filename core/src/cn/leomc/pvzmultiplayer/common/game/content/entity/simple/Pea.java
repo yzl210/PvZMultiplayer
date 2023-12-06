@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.simple;
 
+import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import io.netty.buffer.ByteBuf;
@@ -19,6 +20,8 @@ public class Pea extends Entity {
     @Override
     public void tick() {
         super.tick();
+        if (position().x > Constants.WIDTH)
+            world.removeEntity(this);
     }
 
 

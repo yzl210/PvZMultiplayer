@@ -4,7 +4,12 @@ import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FixedTexture implements Renderable {
+
+    private static final Map<String, FixedTexture> fixedTextures = new HashMap<>();
 
     private final String path;
 
@@ -14,11 +19,10 @@ public class FixedTexture implements Renderable {
         this.path = path;
     }
 
-
     @Override
     public void render(float x, float y) {
         if (texture == null)
-            texture = new Texture(path);
+            texture = textures.computeIfAbsent(path, Texture::new);
         render(x, y, texture.getWidth(), texture.getHeight());
     }
 
@@ -30,5 +34,10 @@ public class FixedTexture implements Renderable {
         batch.begin();
         batch.draw(texture, x, y, width, height);
         batch.end();
+    }
+
+
+    public static FixedTexture of(String path) {
+        return fixedTextures.computeIfAbsent(path, FixedTexture::new);
     }
 }

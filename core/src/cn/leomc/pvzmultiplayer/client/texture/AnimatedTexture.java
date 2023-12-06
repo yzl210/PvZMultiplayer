@@ -8,15 +8,22 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AnimatedTexture implements Renderable {
 
+    private static final Map<String, TextureRegion[]> textureRegions = new HashMap<>();
+
+    private final Texture sheet;
     private final Animation<TextureRegion> animation;
     private float timeElapsed;
 
     public AnimatedTexture(String path, int frames) {
-        Texture sheet = new Texture(path);
-        TextureRegion[][] regions = TextureRegion.split(sheet, sheet.getWidth() / frames, sheet.getHeight());
-        this.animation = new Animation<>(1f / Constants.FPS, regions[0]);
+        this.sheet = textures.computeIfAbsent(path, Texture::new);
+        TextureRegion[] regions = textureRegions.computeIfAbsent(path, p ->
+                TextureRegion.split(sheet, sheet.getWidth() / frames, sheet.getHeight())[0]);
+        this.animation = new Animation<>(1f / Constants.FPS, regions);
     }
 
     @Override

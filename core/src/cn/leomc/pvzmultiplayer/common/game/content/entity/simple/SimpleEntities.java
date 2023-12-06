@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 public class SimpleEntities {
 
     public static final SimpleEntityType<Pea> PEA = SimpleEntityType.<Pea>builder()
-            .id("projectile:pea")
+            .id("pea")
             .texture(() -> new FixedTexture("projectiles/pea.png"))
             .dimension(new Vector2(32, 32))
             .constructor(Pea::new)
@@ -16,7 +16,7 @@ public class SimpleEntities {
             .build();
 
     public static final SimpleEntityType<Sun> SUN = SimpleEntityType.<Sun>builder()
-            .id("misc:sun")
+            .id("sun")
             .constructor(Sun::new)
             .deserializer(Sun::new)
             .entityClass(Sun.class)

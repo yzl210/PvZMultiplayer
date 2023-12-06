@@ -45,10 +45,11 @@ public abstract class Entity {
         texture = type().texture();
     }
 
-    public void render() {
-        if (texture == null)
-            texture = type().texture();
+    public void unloadResources() {
 
+    }
+
+    public void render() {
         movementPercentage += (float) Constants.TPS / (1 / Gdx.graphics.getDeltaTime());
         float x = position().x + velocity.x * movementPercentage;
         float y = position().y + velocity.y * movementPercentage;

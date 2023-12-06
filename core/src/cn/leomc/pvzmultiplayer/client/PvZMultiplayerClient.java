@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class PvZMultiplayerClient extends ApplicationAdapter {
     public static ApplicationLogger LOGGER;
 
+    private static Thread renderThread;
     private static PvZMultiplayerClient INSTANCE;
 
     private SpriteBatch batch;
@@ -36,6 +37,7 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     private final Queue<Runnable> tasksQueue = new ConcurrentLinkedQueue<>();
 
     public PvZMultiplayerClient() {
+        renderThread = Thread.currentThread();
         INSTANCE = this;
     }
 
@@ -110,5 +112,9 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
 
     public static PvZMultiplayerClient getInstance() {
         return INSTANCE;
+    }
+
+    public static Thread getRenderThread() {
+        return renderThread;
     }
 }

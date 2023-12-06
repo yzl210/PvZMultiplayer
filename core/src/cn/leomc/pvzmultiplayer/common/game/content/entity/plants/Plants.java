@@ -1,11 +1,9 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.plants;
 
-import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
 import cn.leomc.pvzmultiplayer.common.Utils;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.attack.Peashooter;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.resource.Sunflower;
-import com.badlogic.gdx.math.Vector2;
 
 public class Plants {
 
@@ -24,8 +22,7 @@ public class Plants {
             .health(6)
             .sun(100)
             .seedRechargeTicks(Utils.millisToTicks(7500))
-            .dimension(new Vector2(80, 80))
-            .texture(PlantState.IDLE, () -> new AnimatedTexture("plants/peashooter/idle.png", 1))
+            .texture(PlantState.IDLE, 1)
             .constructor(Peashooter::new)
             .deserializer(Peashooter::new)
             .entityClass(Peashooter.class)

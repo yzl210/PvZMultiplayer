@@ -2,6 +2,9 @@ package cn.leomc.pvzmultiplayer.client;
 
 import cn.leomc.pvzmultiplayer.client.scene.Scene;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SceneManager {
 
@@ -36,6 +39,13 @@ public class SceneManager {
     public void render() {
         if (currentScene != null)
             currentScene.render();
+        SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
+        BitmapFont font = PvZMultiplayerClient.getInstance().getFont();
+        batch.begin();
+        font.getData().setScale(2);
+        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Constants.HEIGHT - 10);
+        font.getData().setScale(1);
+        batch.end();
     }
 
     public void tick() {

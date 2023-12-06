@@ -47,6 +47,10 @@ public class PvZMultiplayerServer extends EventLoop {
         super.tick();
     }
 
+    public Thread getServerThread() {
+        return serverThread;
+    }
+
     public ServerManager getServerManager() {
         return serverManager;
     }

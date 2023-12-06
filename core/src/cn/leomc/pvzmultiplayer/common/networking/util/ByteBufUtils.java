@@ -3,6 +3,7 @@ package cn.leomc.pvzmultiplayer.common.networking.util;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import cn.leomc.pvzmultiplayer.common.text.component.TextComponent;
 import cn.leomc.pvzmultiplayer.common.text.component.TranslatableComponent;
+import com.badlogic.gdx.math.Vector2;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 
@@ -37,6 +38,15 @@ public class ByteBufUtils {
             case 1 -> new TranslatableComponent(readString(buf));
             default -> throw new DecoderException("Unknown component type: " + b);
         };
+    }
+
+    public static void writeVector2(ByteBuf buf, Vector2 vector2) {
+        buf.writeFloat(vector2.x);
+        buf.writeFloat(vector2.y);
+    }
+
+    public static Vector2 readVector2(ByteBuf buf) {
+        return new Vector2(buf.readFloat(), buf.readFloat());
     }
 }
 

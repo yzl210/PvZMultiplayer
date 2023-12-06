@@ -44,7 +44,7 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
         LOGGER = Gdx.app.getApplicationLogger();
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("skins/freezing/freezing-ui.json"));
-        font = generateFont();
+        font = skin.getFont("font");
         inputMultiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(inputMultiplexer);
         viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());

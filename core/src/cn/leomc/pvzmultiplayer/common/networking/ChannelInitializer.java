@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.SocketChannelConfig;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
 public class ChannelInitializer extends io.netty.channel.ChannelInitializer<SocketChannel> {
 
@@ -22,6 +24,8 @@ public class ChannelInitializer extends io.netty.channel.ChannelInitializer<Sock
         config.setKeepAlive(true);
 
         ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+        pipeline.addLast(new ProtobufVarint32FrameDecoder());
         pipeline.addLast(new PacketEncoder());
         pipeline.addLast(new PacketDecoder());
         pipeline.addLast(new PacketHandler());

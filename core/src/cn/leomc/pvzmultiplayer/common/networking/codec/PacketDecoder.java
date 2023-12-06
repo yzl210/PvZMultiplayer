@@ -17,6 +17,5 @@ public class PacketDecoder extends ByteToMessageDecoder {
         int id = in.readInt();
         Packet packet = PacketManager.getPacket(id, in);
         out.add(packet);
-        System.out.println("Packet received: " + packet.getClass().getSimpleName());
     }
 }

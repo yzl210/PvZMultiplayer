@@ -1,7 +1,5 @@
 package cn.leomc.pvzmultiplayer.common.server.networking;
 
-import cn.leomc.pvzmultiplayer.common.game.GameManager;
-import cn.leomc.pvzmultiplayer.common.game.GameState;
 import cn.leomc.pvzmultiplayer.common.server.ServerManager;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.Musics;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -18,6 +19,7 @@ public class MainMenuScene extends BaseScene {
     private Button hostButton;
     private Button joinButton;
 
+
     @Override
     public void create() {
         stage = createStage();
@@ -32,7 +34,8 @@ public class MainMenuScene extends BaseScene {
                 String text = nameField.getText();
                 if (text.isBlank() || text.length() > 16)
                     event.cancel();
-                ClientGameManager.get().setName(nameField.getText());
+                else
+                    ClientGameManager.get().setName(nameField.getText());
             }
         });
         stage.addActor(nameField);
@@ -57,6 +60,8 @@ public class MainMenuScene extends BaseScene {
         });
         stage.addActor(joinButton);
 
+        if (!Musics.MENU.isPlaying())
+            Musics.MENU.play();
     }
 
     @Override
@@ -72,7 +77,6 @@ public class MainMenuScene extends BaseScene {
         batch.begin();
         batch.draw(background, 0, 0);
         batch.end();
-        getFont().getData().setScale(0.2f);
         stage.draw();
         stage.act();
     }

@@ -2,7 +2,6 @@ package cn.leomc.pvzmultiplayer.common.game;
 
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
 import cn.leomc.pvzmultiplayer.common.game.logic.collaborative.CollaborativeGameSettings;
-import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundGameSettingsPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundGameStartPacket;
 import cn.leomc.pvzmultiplayer.common.server.PvZMultiplayerServer;
@@ -57,7 +56,7 @@ public class GameManager {
     }
 
     public void startGame() {
-        if(!settings.canStart())
+        if (!settings.canStart())
             return;
         state = GameState.IN_GAME;
         session = GameSession.create(settings);

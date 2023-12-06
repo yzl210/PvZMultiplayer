@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 public class CollaborativeGameSettings implements GameSettings {
 
-    public CollaborativeGameSettings(){
+    public CollaborativeGameSettings() {
 
     }
 

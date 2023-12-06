@@ -8,6 +8,7 @@ import cn.leomc.pvzmultiplayer.client.scene.MainMenuScene;
 import cn.leomc.pvzmultiplayer.common.EventLoop;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.GameState;
+import cn.leomc.pvzmultiplayer.common.game.content.world.World;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.Team;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ServerboundGameSettingsPacket;
@@ -27,6 +28,7 @@ public class ClientGameManager extends EventLoop {
     private GameSettings gameSettings;
     private GameState state;
     private List<String> playerList;
+    private final World world = new World(null);
 
     public ClientGameManager() {
         clientTickThread.start();
@@ -145,6 +147,15 @@ public class ClientGameManager extends EventLoop {
 
     public void startCompetitiveGame(Team team) {
         PvZMultiplayerClient.getInstance().runLater(() -> SceneManager.get().setScene(new CompetitiveGameScene(team)));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+    }
+
+    public World getWorld() {
+        return world;
     }
 
 }

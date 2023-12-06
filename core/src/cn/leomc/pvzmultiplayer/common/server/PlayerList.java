@@ -18,9 +18,9 @@ public class PlayerList {
     private final Map<Channel, ServerPlayer> players = new HashMap<>();
 
     public ServerPlayer addPlayer(Channel channel, String name) {
-        channelGroup.add(channel);
         ServerPlayer player = new ServerPlayer(name, channel);
         players.put(channel, player);
+        channelGroup.add(channel);
         syncPlayers();
         GameManager.get().onAddPlayer(player);
         return player;
@@ -33,6 +33,7 @@ public class PlayerList {
     public void removePlayer(Channel channel) {
         GameManager.get().onRemovePlayer(getPlayer(channel));
         players.remove(channel);
+        channelGroup.remove(channel);
         channel.close();
         syncPlayers();
     }

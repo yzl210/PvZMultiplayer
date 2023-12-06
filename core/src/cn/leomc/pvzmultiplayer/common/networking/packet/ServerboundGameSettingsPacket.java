@@ -26,6 +26,7 @@ public class ServerboundGameSettingsPacket implements Packet {
         buf.writeInt(settings.mode().ordinal());
         settings.write(buf);
     }
+
     @Override
     public void handle(ChannelHandlerContext ctx) {
         runLaterServer(() -> GameManager.get().setSettings(settings));

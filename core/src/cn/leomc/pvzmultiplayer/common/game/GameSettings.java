@@ -11,6 +11,7 @@ public interface GameSettings {
     GameMode mode();
 
     boolean canStart();
+
     void write(ByteBuf buf);
 
     default void onAddPlayer(ServerPlayer player) {

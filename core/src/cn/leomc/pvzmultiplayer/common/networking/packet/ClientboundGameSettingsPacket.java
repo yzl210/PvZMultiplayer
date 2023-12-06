@@ -1,9 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.networking.packet;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
-import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
-import cn.leomc.pvzmultiplayer.client.SceneManager;
-import cn.leomc.pvzmultiplayer.client.scene.LobbyScene;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;

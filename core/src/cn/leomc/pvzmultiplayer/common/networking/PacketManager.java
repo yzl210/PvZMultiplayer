@@ -1,6 +1,9 @@
 package cn.leomc.pvzmultiplayer.common.networking;
 
 import cn.leomc.pvzmultiplayer.common.networking.packet.*;
+import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundAddEntityPacket;
+import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundUpdateEntityPacket;
+import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundUpdateWorldPacket;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
@@ -14,7 +17,7 @@ public class PacketManager {
 
 
     public static <T extends Packet> void register(Class<T> packetClass, Function<ByteBuf, T> deserializer) {
-        if(packetsByClass.containsKey(packetClass))
+        if (packetsByClass.containsKey(packetClass))
             throw new IllegalArgumentException("Packet class " + packetClass + " is already registered");
         PacketInfo<T> packetInfo = new PacketInfo<>(packetsById.size(), packetClass, deserializer);
         packetsById.put(packetInfo.id, packetInfo);
@@ -47,6 +50,11 @@ public class PacketManager {
         register(ServerboundGameSettingsPacket.class, ServerboundGameSettingsPacket::new);
         register(ClientboundGameStartPacket.class, ClientboundGameStartPacket::new);
         register(ServerboundStartGamePacket.class, ServerboundStartGamePacket::new);
+        register(ClientboundUpdateWorldPacket.class, ClientboundUpdateWorldPacket::new);
+        register(ServerboundPlantPacket.class, ServerboundPlantPacket::new);
+        register(ClientboundPlantPacket.class, ClientboundPlantPacket::new);
+        register(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new);
+        register(ClientboundUpdateEntityPacket.class, ClientboundUpdateEntityPacket::new);
     }
 
 }

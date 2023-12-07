@@ -9,6 +9,7 @@ import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundAddEntityPacket;
+import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundRemoveEntityPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundUpdateEntityPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundUpdateWorldPacket;
 import cn.leomc.pvzmultiplayer.common.server.PvZMultiplayerServer;
@@ -87,9 +88,14 @@ public class World {
         return entities.values();
     }
 
+    public void removeEntity(int id) {
+        entities.remove(id);
+        if (isServer())
+            ServerManager.get().getPlayerList().sendPacket(new ClientboundRemoveEntityPacket(id));
+    }
 
     public void removeEntity(Entity entity) {
-        entities.remove(entity.id());
+        removeEntity(entity.id());
     }
 
     public void tick() {

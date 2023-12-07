@@ -44,6 +44,8 @@ public class SceneManager {
         batch.begin();
         font.getData().setScale(2);
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Constants.HEIGHT - 10);
+        if (ClientGameManager.get().getWorld() != null)
+            font.draw(batch, "Entities: " + ClientGameManager.get().getWorld().getEntities().size(), 10, Constants.HEIGHT - 40);
         font.getData().setScale(1);
         batch.end();
     }

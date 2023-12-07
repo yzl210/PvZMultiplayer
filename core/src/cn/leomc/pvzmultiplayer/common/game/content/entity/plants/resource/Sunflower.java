@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Sunflower extends Plant {
 
-    private static final int SUN_INTERVAL = Utils.millisToTicks(1000);
+    private static final int SUN_INTERVAL = Utils.millisToTicks(24000);
 
     private int sunTimer = SUN_INTERVAL;
 

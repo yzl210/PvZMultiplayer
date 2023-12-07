@@ -4,6 +4,7 @@ import cn.leomc.pvzmultiplayer.common.networking.packet.*;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundAddEntityPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundUpdateEntityPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundUpdateWorldPacket;
+import cn.leomc.pvzmultiplayer.common.networking.packet.world.ServerboundEntityInteractPacket;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
@@ -55,6 +56,8 @@ public class PacketManager {
         register(ClientboundPlantPacket.class, ClientboundPlantPacket::new);
         register(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new);
         register(ClientboundUpdateEntityPacket.class, ClientboundUpdateEntityPacket::new);
+        register(ClientboundSunPacket.class, ClientboundSunPacket::new);
+        register(ServerboundEntityInteractPacket.class, ServerboundEntityInteractPacket::new);
     }
 
 }

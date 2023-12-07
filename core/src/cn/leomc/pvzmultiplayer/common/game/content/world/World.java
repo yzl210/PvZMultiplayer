@@ -22,6 +22,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import io.netty.buffer.ByteBuf;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,7 +45,6 @@ public class World {
     }
 
     public boolean plant(int x, int y, PlantType<?> type) {
-        System.out.println("Planting at " + x + ", " + y);
         if (plants.contains(x, y))
             return false;
 
@@ -70,17 +70,21 @@ public class World {
 
 
     public void addEntity(Entity entity) {
-        if (!entities.containsKey(entity.id())) {
-            if (isClient())
-                entity.loadResources();
-            entities.put(entity.id(), entity);
-            if (isServer())
-                ServerManager.get().getPlayerList().sendPacket(new ClientboundAddEntityPacket(entity));
-        }
+        if (entities.containsKey(entity.id()))
+            return;
+        if (isClient())
+            entity.loadResources();
+        entities.put(entity.id(), entity);
+        if (isServer())
+            ServerManager.get().getPlayerList().sendPacket(new ClientboundAddEntityPacket(entity));
     }
 
     public Entity getEntity(int id) {
         return entities.get(id);
+    }
+
+    public Collection<Entity> getEntities() {
+        return entities.values();
     }
 
 

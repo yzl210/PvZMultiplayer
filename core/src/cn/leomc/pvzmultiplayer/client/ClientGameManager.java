@@ -28,6 +28,7 @@ public class ClientGameManager extends EventLoop {
     private GameSettings gameSettings;
     private GameState state;
     private List<String> playerList;
+    private int sun;
     private final World world = new World(null);
 
     public ClientGameManager() {
@@ -158,4 +159,11 @@ public class ClientGameManager extends EventLoop {
         return world;
     }
 
+    public int getSun() {
+        return sun;
+    }
+
+    public void setSun(int sun) {
+        this.sun = sun;
+    }
 }

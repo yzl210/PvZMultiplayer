@@ -37,7 +37,6 @@ public class ServerboundPlantPacket implements Packet {
     public void handle(ChannelHandlerContext ctx) {
         runLaterServer(() -> {
             boolean success = GameManager.get().getGameSession().getWorld().plant(x, y, type);
-            System.out.println("Planted at " + x + ", " + y + " success: " + success);
             ctx.writeAndFlush(new ClientboundPlantPacket(success));
         });
     }

@@ -4,18 +4,21 @@ import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.content.world.World;
 import cn.leomc.pvzmultiplayer.common.game.logic.collaborative.CollaborativeGameSession;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSession;
+import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundSunPacket;
+import cn.leomc.pvzmultiplayer.common.server.ServerManager;
 
 public class GameSession {
 
     private final GameSettings settings;
 
-    private int sun = 100;
+    private int sun;
 
     private final World world = new World(this);
 
 
     public GameSession(GameSettings settings) {
         this.settings = settings;
+        setSun(100);
     }
 
     public static GameSession create(GameSettings settings) {
@@ -39,6 +42,11 @@ public class GameSession {
 
     public void setSun(int sun) {
         this.sun = sun;
+        syncSun();
+    }
+
+    public void syncSun() {
+        ServerManager.get().sendPacket(new ClientboundSunPacket(sun));
     }
 
 }

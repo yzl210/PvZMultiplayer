@@ -47,7 +47,7 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
         }
 
         public PlantBuilder<T> texture(PlantState state, int frames) {
-            String path = "plants/" + id + "/" + state.name().toLowerCase() + ".png";
+            String path = "textures/plants/" + id + "/" + state.name().toLowerCase() + ".png";
             if (frames < 2)
                 return texture(state, () -> FixedTexture.of(path));
             return texture(state, () -> new AnimatedTexture(path, frames));

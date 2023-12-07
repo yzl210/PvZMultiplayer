@@ -8,7 +8,7 @@ public class SimpleEntities {
 
     public static final SimpleEntityType<Pea> PEA = SimpleEntityType.<Pea>builder()
             .id("pea")
-            .texture(() -> new FixedTexture("projectiles/pea.png"))
+            .texture(() -> new FixedTexture("textures/projectiles/pea.png"))
             .dimension(new Vector2(32, 32))
             .constructor(Pea::new)
             .deserializer(Pea::new)
@@ -17,6 +17,8 @@ public class SimpleEntities {
 
     public static final SimpleEntityType<Sun> SUN = SimpleEntityType.<Sun>builder()
             .id("sun")
+            .texture(() -> new FixedTexture("textures/misc/sun.png"))
+            .dimension(new Vector2(64, 64))
             .constructor(Sun::new)
             .deserializer(Sun::new)
             .entityClass(Sun.class)

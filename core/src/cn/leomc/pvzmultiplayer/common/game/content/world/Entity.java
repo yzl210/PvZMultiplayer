@@ -6,6 +6,8 @@ import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import cn.leomc.pvzmultiplayer.common.networking.util.ByteBufUtils;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.netty.buffer.ByteBuf;
@@ -49,20 +51,35 @@ public abstract class Entity {
 
     }
 
+
+    ShapeRenderer shapeRenderer;
+
+    public static boolean debug = true;
+
     public void render() {
-        movementPercentage += (float) Constants.TPS / (1 / Gdx.graphics.getDeltaTime());
+        movementPercentage += Constants.TPS / (1 / Gdx.graphics.getDeltaTime());
         float x = position().x + velocity.x * movementPercentage;
         float y = position().y + velocity.y * movementPercentage;
 
         texture.render(x, y, type().dimension().x, type().dimension().y);
+
+        if (!debug)
+            return;
+
+        if (shapeRenderer == null)
+            shapeRenderer = new ShapeRenderer();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        Gdx.gl.glLineWidth(3);
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.rect(position.x, position.y, type().dimension().x, type().dimension().y);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(x, y, type().dimension().x, type().dimension().y);
+        shapeRenderer.end();
     }
 
 
     public void onCollide(Entity entity) {
-
-    }
-
-    public void onClicked() {
 
     }
 
@@ -79,8 +96,12 @@ public abstract class Entity {
         velocity = ByteBufUtils.readVector2(buf);
     }
 
+    public Vector2 velocity() {
+        return velocity;
+    }
+
     public Vector2 position() {
-        return position.cpy();
+        return position;
     }
 
     public int id() {

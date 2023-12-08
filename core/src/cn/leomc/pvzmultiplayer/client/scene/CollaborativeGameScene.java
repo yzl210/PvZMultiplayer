@@ -2,7 +2,7 @@ package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.Musics;
-import cn.leomc.pvzmultiplayer.client.widget.SunCard;
+import cn.leomc.pvzmultiplayer.client.widget.Bar;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plants;
@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class CollaborativeGameScene extends BaseScene {
 
-    private PlantType<?> selectedPlant = Plants.SUNFLOWER;
+    private PlantType<?> selectedPlant;
     private Stage stage;
 
     @Override
@@ -28,10 +28,14 @@ public class CollaborativeGameScene extends BaseScene {
         ClientGameManager.get().getWorld().loadResources();
 
         stage = createStage();
-        SunCard sunCard = new SunCard(() -> ClientGameManager.get().getSun(), getSkin());
-        sunCard.setScale(1.25f);
-        sunCard.setPosition(0, Gdx.graphics.getHeight() - sunCard.getHeight());
-        stage.addActor(sunCard);
+        Bar bar = new Bar(() -> ClientGameManager.get().getSun(), () -> selectedPlant, type -> selectedPlant = type, getSkin());
+        bar.addPlant(Plants.PEASHOOTER);
+        bar.addPlant(Plants.SUNFLOWER);
+        bar.setScale(0.9f);
+        bar.setPosition(0, Gdx.graphics.getHeight() - bar.getHeight() * 0.9f);
+
+
+        stage.addActor(bar);
     }
 
 
@@ -54,7 +58,10 @@ public class CollaborativeGameScene extends BaseScene {
         if (selectedPlant != null) {
             int x = (int) (gridX / Map.DEFAULT.plantGridDimension().x);
             int y = (int) (gridY / Map.DEFAULT.plantGridDimension().y);
+            if (x < 0 || y < 0 || x > 8 || y > 4)
+                return false;
             ClientGameManager.get().getConnection().sendPacket(new ServerboundPlantPacket(selectedPlant, x, y));
+            return true;
         }
 
         ClientGameManager.get().getWorld().getEntities().forEach(entity -> {
@@ -66,7 +73,7 @@ public class CollaborativeGameScene extends BaseScene {
             }
         });
 
-        return true;
+        return false;
     }
 
     @Override
@@ -81,7 +88,7 @@ public class CollaborativeGameScene extends BaseScene {
 
     public void plantResult(boolean success) {
         if (success)
-            selectedPlant = selectedPlant == Plants.SUNFLOWER ? Plants.PEASHOOTER : Plants.SUNFLOWER;
+            selectedPlant = null;
     }
 
     @Override

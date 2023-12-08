@@ -17,7 +17,7 @@ public class Sunflower extends Plant {
 
     private static final int SUN_INTERVAL = Utils.millisToTicks(24000);
 
-    private int sunTimer = SUN_INTERVAL;
+    private int sunTimer = SUN_INTERVAL / 2;
 
     public Sunflower(PlantContext context) {
         super(context);

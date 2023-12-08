@@ -3,6 +3,7 @@ package cn.leomc.pvzmultiplayer.client;
 import cn.leomc.pvzmultiplayer.client.scene.Scene;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -43,10 +44,12 @@ public class SceneManager {
         BitmapFont font = PvZMultiplayerClient.getInstance().getFont();
         batch.begin();
         font.getData().setScale(2);
-        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Constants.HEIGHT - 10);
+        font.setColor(Color.BLACK);
+        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 0, 30);
         if (ClientGameManager.get().getWorld() != null)
-            font.draw(batch, "Entities: " + ClientGameManager.get().getWorld().getEntities().size(), 10, Constants.HEIGHT - 40);
+            font.draw(batch, "Entities: " + ClientGameManager.get().getWorld().getEntities().size(), 0, 70);
         font.getData().setScale(1);
+        font.setColor(Color.WHITE);
         batch.end();
     }
 

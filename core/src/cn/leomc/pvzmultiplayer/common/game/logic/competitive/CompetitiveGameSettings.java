@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CompetitiveGameSettings implements GameSettings {
+public class CompetitiveGameSettings extends GameSettings {
 
     private final Multimap<Team, String> playerTeam = HashMultimap.create();
 
@@ -65,6 +65,7 @@ public class CompetitiveGameSettings implements GameSettings {
 
     @Override
     public void write(ByteBuf buf) {
+        super.write(buf);
         buf.writeInt(playerTeam.size());
         AtomicInteger i = new AtomicInteger();
         playerTeam.forEach((team, player) -> {
@@ -75,6 +76,7 @@ public class CompetitiveGameSettings implements GameSettings {
     }
 
     public void read(ByteBuf buf) {
+        super.read(buf);
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
             Team team = Team.values()[buf.readInt()];

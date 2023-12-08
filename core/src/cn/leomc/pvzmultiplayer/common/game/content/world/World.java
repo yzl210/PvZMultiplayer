@@ -25,14 +25,14 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class World {
 
     private final GameSession session;
     private final cn.leomc.pvzmultiplayer.common.game.content.world.Map map = cn.leomc.pvzmultiplayer.common.game.content.world.Map.DEFAULT;
 
-    private final Map<Integer, Entity> entities = new ConcurrentHashMap<>();
+    private final Map<Integer, Entity> entities = new ConcurrentSkipListMap<>();
 
     private final Table<Integer, Integer, Plant> plants = HashBasedTable.create();
     private NinePatch background;
@@ -46,8 +46,16 @@ public class World {
     }
 
     public boolean plant(int x, int y, PlantType<?> type) {
+        if (x < 0 || y < 0 || x > 8 || y > 4)
+            return false;
+
         if (plants.contains(x, y))
             return false;
+
+        if (session.getSun() < type.sun())
+            return false;
+
+        session.setSun(session.getSun() - type.sun());
 
         Plant plant = type.create(new PlantContext() {
             @Override

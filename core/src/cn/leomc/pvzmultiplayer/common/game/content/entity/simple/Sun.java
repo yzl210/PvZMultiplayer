@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.simple;
 
 import cn.leomc.pvzmultiplayer.client.Constants;
+import cn.leomc.pvzmultiplayer.common.game.GameManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Interactable;
@@ -18,7 +19,7 @@ public class Sun extends Entity implements Interactable {
     }
 
     public Sun(EntityCreationContext context, float maxDrop) {
-        this(context, 25, maxDrop);
+        this(context, GameManager.get().getSettings().sunAmount, maxDrop);
     }
 
     public Sun(EntityCreationContext context, int amount, float maxDrop) {
@@ -35,6 +36,8 @@ public class Sun extends Entity implements Interactable {
     public void tick() {
         super.tick();
         if (!clicked) {
+            if (GameManager.get().getSettings().lazyMode)
+                collect();
             dropped -= velocity.y;
             if (dropped >= maxDrop)
                 velocity.set(0, 0);
@@ -49,6 +52,10 @@ public class Sun extends Entity implements Interactable {
 
     @Override
     public void onTouchDown(int x, int y, int pointer, int button) {
+        collect();
+    }
+
+    public void collect() {
         clicked = true;
         velocity.set(-(position.x / 20f), (Constants.HEIGHT - 50 - position.y) / 20f);
     }

@@ -6,21 +6,33 @@ import cn.leomc.pvzmultiplayer.common.server.ServerPlayer;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import io.netty.buffer.ByteBuf;
 
-public interface GameSettings {
+public abstract class GameSettings {
 
-    GameMode mode();
+    public int sunAmount = 50;
+    public boolean lazyMode = false;
 
-    boolean canStart();
+    public abstract GameMode mode();
 
-    void write(ByteBuf buf);
+    public abstract boolean canStart();
 
-    default void onAddPlayer(ServerPlayer player) {
+    public void write(ByteBuf buf) {
+        buf.writeInt(sunAmount);
+        buf.writeBoolean(lazyMode);
     }
 
-    default void onRemovePlayer(ServerPlayer player) {
+    public void read(ByteBuf buf) {
+        sunAmount = buf.readInt();
+        lazyMode = buf.readBoolean();
     }
 
-    enum GameMode {
+
+    public void onAddPlayer(ServerPlayer player) {
+    }
+
+    public void onRemovePlayer(ServerPlayer player) {
+    }
+
+    public enum GameMode {
         COLLABORATIVE,
         COMPETITIVE;
 

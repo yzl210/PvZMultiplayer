@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -26,6 +27,8 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     private static PvZMultiplayerClient INSTANCE;
 
     private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
+
     private Skin skin;
     private BitmapFont font;
     private InputMultiplexer inputMultiplexer;
@@ -45,6 +48,7 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     public void create() {
         LOGGER = Gdx.app.getApplicationLogger();
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
         skin = new Skin(Gdx.files.internal("skins/freezing/freezing-ui.json"));
         font = skin.getFont("font");
         inputMultiplexer = new InputMultiplexer();
@@ -84,6 +88,10 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
 
     public SpriteBatch getBatch() {
         return batch;
+    }
+
+    public ShapeRenderer getShapeRenderer() {
+        return shapeRenderer;
     }
 
     public BitmapFont getFont() {

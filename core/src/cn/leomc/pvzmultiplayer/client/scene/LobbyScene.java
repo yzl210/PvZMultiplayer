@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.Constants;
+import cn.leomc.pvzmultiplayer.client.widget.HorizontalLabeledTextField;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.Team;
@@ -16,6 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 public class LobbyScene extends BaseScene {
 
     private Stage stage;
@@ -23,6 +27,8 @@ public class LobbyScene extends BaseScene {
     private HorizontalGroup leftGroup;
     private ButtonGroup<TextButton> gameModeGroup;
     private TextButton startButton;
+
+    private final ArrayList<Consumer<GameSettings>> settingsListeners = new ArrayList<>();
 
     @Override
     public void create() {
@@ -51,13 +57,8 @@ public class LobbyScene extends BaseScene {
         rightGroup.setSize(Constants.WIDTH / 2f, stage.getHeight());
         rightGroup.align(Align.center);
         stage.addActor(rightGroup);
-
-        Label gameSettingsLabel = new Label("Game Settings:", getSkin());
-        gameSettingsLabel.setFontScale(2);
-        rightGroup.addActor(gameSettingsLabel);
-
         Label gameModeLabel = new Label("Game Mode:", getSkin());
-        gameModeLabel.setFontScale(1.5f);
+        gameModeLabel.setFontScale(2);
         rightGroup.addActor(gameModeLabel);
 
         gameModeGroup = new ButtonGroup<>();
@@ -84,6 +85,42 @@ public class LobbyScene extends BaseScene {
         }
         gameModeGroup.setChecked(ClientGameManager.get().getGameSettings().mode().name());
 
+        Label gameSettingsLabel = new Label("Game Settings:", getSkin());
+        gameSettingsLabel.setFontScale(2);
+        rightGroup.addActor(gameSettingsLabel);
+
+        HorizontalLabeledTextField sunAmount = new HorizontalLabeledTextField("Sun Amount: ", "", getSkin());
+        settingsListeners.add(settings -> sunAmount.getTextField().setText(String.valueOf(settings.sunAmount)));
+        sunAmount.getTextField().addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                try {
+                    int amount = Integer.parseInt(sunAmount.getText());
+                    runLater(() -> {
+                        ClientGameManager.get().getGameSettings().sunAmount = amount;
+                        ClientGameManager.get().sendGameSettings();
+                    });
+                } catch (NumberFormatException e) {
+                    event.cancel();
+                }
+            }
+        });
+        rightGroup.addActor(sunAmount);
+
+        CheckBox lazyModeButton = new CheckBox("Lazy Mode", getSkin());
+        settingsListeners.add(settings -> lazyModeButton.setChecked(settings.lazyMode));
+        lazyModeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                runLater(() -> {
+                    ClientGameManager.get().getGameSettings().lazyMode = lazyModeButton.isChecked();
+                    ClientGameManager.get().sendGameSettings();
+                });
+            }
+        });
+        rightGroup.addActor(lazyModeButton);
+
+
         startButton = new TextButton("Start", getSkin());
         startButton.addListener(new ChangeListener() {
             @Override
@@ -95,6 +132,8 @@ public class LobbyScene extends BaseScene {
 
 
         rightGroup.addActor(startButton);
+
+        settingsListeners.forEach(listener -> listener.accept(ClientGameManager.get().getGameSettings()));
     }
 
     private void collaboration(Group leftGroup) {
@@ -201,6 +240,7 @@ public class LobbyScene extends BaseScene {
         leftGroup.clear();
         GameSettings settings = ClientGameManager.get().getGameSettings();
         gameModeGroup.setChecked(settings.mode().name());
+        settingsListeners.forEach(listener -> listener.accept(settings));
         switch (settings.mode()) {
             case COLLABORATIVE -> collaboration(leftGroup);
             case COMPETITIVE -> competitive(leftGroup);

@@ -27,6 +27,16 @@ public class SunCard extends Table {
     }
 
     @Override
+    public float getPrefWidth() {
+        return 76 * getScaleX();
+    }
+
+    @Override
+    public float getPrefHeight() {
+        return 87 * getScaleY();
+    }
+
+    @Override
     public void draw(Batch batch, float parentAlpha) {
         label.setText(String.valueOf(sun.getAsInt()));
         batch.end();
@@ -37,9 +47,8 @@ public class SunCard extends Table {
 
     @Override
     protected void scaleChanged() {
-        setWidth(getWidth() * getScaleX());
-        setHeight(getHeight() * getScaleY());
         padBottom(5 * getScaleY());
         label.setFontScale(getScaleX(), getScaleY());
+        pack();
     }
 }

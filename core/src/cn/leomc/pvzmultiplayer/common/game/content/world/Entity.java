@@ -54,7 +54,7 @@ public abstract class Entity {
 
     ShapeRenderer shapeRenderer;
 
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public void render() {
         movementPercentage += Constants.TPS / (1 / Gdx.graphics.getDeltaTime());

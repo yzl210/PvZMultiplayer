@@ -3,10 +3,13 @@ package cn.leomc.pvzmultiplayer.common.game.content.world;
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.ZombieType;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombies;
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundAddEntityPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundRemoveEntityPacket;
@@ -77,6 +80,23 @@ public class World {
         addEntity(plant);
     }
 
+    public void spawnZombie(int lane, ZombieType<?> type) {
+        int y = lane * 100 + 50;
+        int x = Constants.WIDTH - 200;
+        addEntity(type.create(new EntityCreationContext() {
+            @Override
+            public Vector2 position() {
+                return new Vector2(x, y);
+            }
+
+            @Override
+            public World world() {
+                return World.this;
+            }
+        }));
+
+    }
+
 
     public void addEntity(Entity entity) {
         if (entities.containsKey(entity.id()))
@@ -106,9 +126,16 @@ public class World {
         removeEntity(entity.id());
     }
 
+    int timer = 0;
+
     public void tick() {
         entities.values().forEach(Entity::tick);
         entities.forEach((id, entity) -> sync(entity));
+        timer++;
+        if (timer % 100 == 0)
+            spawnZombie(0, Zombies.NORMAL);
+        // Add zombie for testing
+
     }
 
     public void loadResources() {

@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.common.game.content.entity.simple;
 
 import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombie;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import io.netty.buffer.ByteBuf;
 
@@ -24,6 +25,13 @@ public class Pea extends Entity {
             world.removeEntity(this);
     }
 
+    @Override
+    public void onCollide(Entity entity) {
+        if (entity instanceof Zombie zombie) {
+            world.removeEntity(this);
+            zombie.damage(1);
+        }
+    }
 
     @Override
     public SimpleEntityType<Pea> type() {

@@ -47,6 +47,12 @@ public class Peashooter extends Plant {
     }
 
     @Override
+    public void damage(double amount) {
+        System.out.println("peashooter damage " + amount);
+        super.damage(amount);
+    }
+
+    @Override
     public PlantType<Peashooter> type() {
         return Plants.PEASHOOTER;
     }

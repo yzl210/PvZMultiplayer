@@ -5,11 +5,8 @@ import io.netty.buffer.ByteBuf;
 
 public abstract class Plant extends Entity {
 
-    protected double health;
-
     public Plant(PlantContext context) {
         super(context);
-        this.health = type().health();
     }
 
     public Plant(ByteBuf buf) {
@@ -24,13 +21,11 @@ public abstract class Plant extends Entity {
     @Override
     public void write(ByteBuf buf) {
         super.write(buf);
-        buf.writeDouble(health);
     }
 
     @Override
     public void read(ByteBuf buf) {
         super.read(buf);
-        health = buf.readDouble();
     }
 
     public abstract PlantType<?> type();

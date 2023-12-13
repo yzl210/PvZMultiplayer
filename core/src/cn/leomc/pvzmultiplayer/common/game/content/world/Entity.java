@@ -23,6 +23,7 @@ public abstract class Entity {
     protected Vector2 velocity = new Vector2();
     protected Vector2 position;
     protected Rectangle box;
+    protected double health;
 
     protected Renderable texture;
     protected float movementPercentage = 0;
@@ -32,6 +33,7 @@ public abstract class Entity {
         this.world = context.world();
         this.box = new Rectangle(context.position().x, context.position().y, type().dimension().x, type().dimension().y);
         this.position = context.position();
+        this.health = type().health();
     }
 
     public Entity(ByteBuf buf) {
@@ -40,7 +42,15 @@ public abstract class Entity {
 
     public void tick() {
         movementPercentage = 0;
+        tickCollision();
         position.add(velocity);
+        box.setPosition(position);
+    }
+
+    public void tickCollision() {
+        for (Entity entity : world.getEntities())
+            if (entity != this && box.overlaps(entity.box))
+                onCollide(entity);
     }
 
     public void loadResources() {
@@ -83,10 +93,20 @@ public abstract class Entity {
 
     }
 
+    public void damage(double amount) {
+        if (!type().hasHealth())
+            return;
+        health -= amount;
+        if (health <= 0)
+            world.removeEntity(this);
+    }
+
     public void write(ByteBuf buf) {
         buf.writeInt(id);
         ByteBufUtils.writeVector2(buf, position);
         ByteBufUtils.writeVector2(buf, velocity);
+        if (type().hasHealth())
+            buf.writeDouble(health);
     }
 
     public void read(ByteBuf buf) {
@@ -94,6 +114,8 @@ public abstract class Entity {
         id = buf.readInt();
         position = ByteBufUtils.readVector2(buf);
         velocity = ByteBufUtils.readVector2(buf);
+        if (type().hasHealth())
+            health = buf.readDouble();
     }
 
     public Vector2 velocity() {

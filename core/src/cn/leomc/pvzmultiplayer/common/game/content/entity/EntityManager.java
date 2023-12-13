@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.common.game.content.entity;
 
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.simple.SimpleEntities;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombies;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import cn.leomc.pvzmultiplayer.common.networking.util.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -42,6 +43,7 @@ public class EntityManager {
 
     static {
         Plants.register();
+        Zombies.register();
         SimpleEntities.register();
     }
 

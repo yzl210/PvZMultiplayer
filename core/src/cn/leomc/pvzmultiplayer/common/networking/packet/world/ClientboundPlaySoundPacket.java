@@ -19,9 +19,6 @@ public record ClientboundPlaySoundPacket(String sound) implements Packet {
 
     @Override
     public void handle(ChannelHandlerContext ctx) {
-        runLaterClient(() -> {
-            System.out.println("Playing sound: " + sound);
-            AudioManager.get(sound).play();
-        });
+        runLaterClient(() -> AudioManager.get(sound).play());
     }
 }

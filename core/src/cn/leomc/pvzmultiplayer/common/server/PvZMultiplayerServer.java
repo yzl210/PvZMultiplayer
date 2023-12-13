@@ -41,13 +41,10 @@ public class PvZMultiplayerServer extends EventLoop {
 
     @Override
     public void tick() {
-        long start = System.nanoTime();
         if (serverManager == null)
             serverManager = new ServerManager();
         gameManager.tick();
         super.tick();
-        long end = System.nanoTime();
-        System.out.println("Tick took " + (end - start) / 1000000f + "ms");
     }
 
     public Thread getServerThread() {

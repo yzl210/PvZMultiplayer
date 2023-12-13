@@ -17,6 +17,7 @@ public class AnimatedTexture implements Renderable {
     private final String path;
     private final int frames;
     private final float frameDuration;
+    private final Animation.PlayMode playMode;
     private final float alpha;
 
 
@@ -24,19 +25,23 @@ public class AnimatedTexture implements Renderable {
     private Animation<TextureRegion> animation;
     private float timeElapsed;
 
-
     public AnimatedTexture(String path, int frames) {
-        this(path, frames, 1 / 6f, 1);
+        this(path, frames, Animation.PlayMode.LOOP);
     }
 
-    public AnimatedTexture(String path, int frames, float frameDuration) {
-        this(path, frames, frameDuration, 1);
+    public AnimatedTexture(String path, int frames, Animation.PlayMode playMode) {
+        this(path, frames, playMode, 1 / 6f);
     }
 
-    public AnimatedTexture(String path, int frames, float frameDuration, float alpha) {
+    public AnimatedTexture(String path, int frames, Animation.PlayMode playMode, float frameDuration) {
+        this(path, frames, playMode, frameDuration, 1);
+    }
+
+    public AnimatedTexture(String path, int frames, Animation.PlayMode playMode, float frameDuration, float alpha) {
         this.path = path;
         this.frames = frames;
         this.frameDuration = frameDuration;
+        this.playMode = playMode;
         this.alpha = alpha;
     }
 
@@ -45,6 +50,7 @@ public class AnimatedTexture implements Renderable {
         TextureRegion[] regions = textureRegions.computeIfAbsent(path, p ->
                 TextureRegion.split(sheet, sheet.getWidth() / frames, sheet.getHeight())[0]);
         this.animation = new Animation<>(frameDuration, regions);
+        animation.setPlayMode(playMode);
     }
 
     public void setKeyFrame(int frame) {

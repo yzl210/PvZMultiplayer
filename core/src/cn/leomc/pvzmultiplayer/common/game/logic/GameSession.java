@@ -18,7 +18,7 @@ public class GameSession {
 
     public GameSession(GameSettings settings) {
         this.settings = settings;
-        setSun(50);
+        setSun(500);
     }
 
     public static GameSession create(GameSettings settings) {

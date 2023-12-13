@@ -3,6 +3,7 @@ package cn.leomc.pvzmultiplayer.common.game.content.entity.simple;
 import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTextureRegion;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 
 public class SimpleEntities {
@@ -18,7 +19,7 @@ public class SimpleEntities {
 
     public static final SimpleEntityType<Sun> SUN = SimpleEntityType.<Sun>builder()
             .id("sun")
-            .texture(() -> new AnimatedTexture("textures/misc/sun.png", 2, 0.5f, 0.76f))
+            .texture(() -> new AnimatedTexture("textures/misc/sun.png", 2, Animation.PlayMode.LOOP, 0.5f, 0.76f))
             .dimension(new Vector2(64, 64))
             .constructor(Sun::new)
             .deserializer(Sun::new)

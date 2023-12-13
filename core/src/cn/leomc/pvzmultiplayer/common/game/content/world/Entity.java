@@ -29,12 +29,13 @@ public abstract class Entity {
     protected double health;
 
     protected Renderable texture;
-    protected float movementPercentage = 0;
+    protected float timeElapsed;
 
     public Entity(EntityCreationContext context) {
         this.id = ID_COUNTER.getAndIncrement();
         this.world = context.world();
-        this.box = new Rectangle(context.position().x, context.position().y, type().dimension().x, type().dimension().y);
+        Vector2 dimension = getDimension();
+        this.box = new Rectangle(context.position().x, context.position().y, dimension.x, dimension.y);
         this.position = context.position();
         this.health = type().health();
     }
@@ -44,7 +45,6 @@ public abstract class Entity {
     }
 
     public void tick() {
-        movementPercentage = 0;
         tickCollision();
         position.add(velocity);
         box.setPosition(position);
@@ -67,14 +67,18 @@ public abstract class Entity {
 
     ShapeRenderer shapeRenderer;
 
-    public static boolean debug = false;
+    public static boolean debug = true;
 
     public void render() {
-        movementPercentage += Constants.TPS / (1 / Gdx.graphics.getDeltaTime());
-        float x = position().x + velocity.x * movementPercentage;
-        float y = position().y + velocity.y * movementPercentage;
+        float interpolation = timeElapsed / Constants.TICK_DURATION;
+        float x = position().x + velocity.x * interpolation;
+        float y = position().y + velocity.y * interpolation;
 
-        texture.render(x, y, type().dimension().x, type().dimension().y);
+        timeElapsed += Gdx.graphics.getDeltaTime();
+
+        Vector2 dimension = getDimension();
+
+        texture.render(x, y, dimension.x, dimension.y);
 
         if (!debug)
             return;
@@ -85,9 +89,9 @@ public abstract class Entity {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl.glLineWidth(3);
         shapeRenderer.setColor(Color.BLUE);
-        shapeRenderer.rect(position.x, position.y, type().dimension().x, type().dimension().y);
+        shapeRenderer.rect(position.x, position.y, dimension.x, dimension.y);
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(x, y, type().dimension().x, type().dimension().y);
+        shapeRenderer.rect(x, y, dimension.x, dimension.y);
         shapeRenderer.end();
 
         Gdx.gl.glLineWidth(1);
@@ -99,8 +103,12 @@ public abstract class Entity {
             text += " " + health + "/" + type().health();
 
         batch.begin();
-        font.draw(batch, text, position.x, position.y + type().dimension().y + 20);
+        font.draw(batch, text, x, y + dimension.y + 20);
         batch.end();
+    }
+
+    public Vector2 getDimension() {
+        return type().dimension();
     }
 
 
@@ -129,7 +137,7 @@ public abstract class Entity {
     }
 
     public void read(ByteBuf buf) {
-        movementPercentage = 0;
+        timeElapsed = 0;
         id = buf.readInt();
         position = ByteBufUtils.readVector2(buf);
         velocity = ByteBufUtils.readVector2(buf);

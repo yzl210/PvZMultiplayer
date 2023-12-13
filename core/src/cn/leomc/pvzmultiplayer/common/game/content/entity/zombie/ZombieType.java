@@ -23,6 +23,8 @@ public interface ZombieType<T extends Zombie> extends EntityType<T, EntityCreati
 
     Renderable texture(ZombieState state);
 
+    Vector2 dimension(ZombieState state);
+
     static <T extends Zombie> ZombieBuilder<T> builder() {
         return new ZombieBuilder<>();
     }
@@ -33,6 +35,7 @@ public interface ZombieType<T extends Zombie> extends EntityType<T, EntityCreati
         private double damage;
         private Vector2 speed;
         private final EnumMap<ZombieState, Supplier<Renderable>> textures = new EnumMap<>(ZombieState.class);
+        private final EnumMap<ZombieState, Vector2> dimensions = new EnumMap<>(ZombieState.class);
 
         public ZombieBuilder() {
             dimension = new Vector2(80, 160);
@@ -75,6 +78,18 @@ public interface ZombieType<T extends Zombie> extends EntityType<T, EntityCreati
             return this;
         }
 
+        @Override
+        public ZombieBuilder<T> dimension(Vector2 dimension) {
+            super.dimension(dimension);
+            this.dimensions.put(ZombieState.IDLE, dimension);
+            return this;
+        }
+
+        public ZombieBuilder<T> dimension(ZombieState state, Vector2 dimension) {
+            this.dimensions.put(state, dimension);
+            return this;
+        }
+
         public ZombieType<T> build() {
             EntityType<T, EntityCreationContext> type = super.build();
             return new ZombieType<>() {
@@ -99,13 +114,23 @@ public interface ZombieType<T extends Zombie> extends EntityType<T, EntityCreati
                 }
 
                 @Override
+                public Vector2 dimension() {
+                    return dimension(ZombieState.IDLE);
+                }
+
+                @Override
                 public Renderable texture(ZombieState state) {
                     return textures.get(state).get();
                 }
 
                 @Override
+                public Vector2 dimension(ZombieState state) {
+                    return dimensions.get(state);
+                }
+
+                @Override
                 public Renderable texture() {
-                    return texture(ZombieState.WALKING);
+                    return texture(ZombieState.IDLE);
                 }
 
                 @Override

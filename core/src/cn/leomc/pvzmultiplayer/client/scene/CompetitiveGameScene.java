@@ -1,7 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
-import cn.leomc.pvzmultiplayer.client.Musics;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
+import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.Team;
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 
@@ -15,8 +15,8 @@ public class CompetitiveGameScene extends BaseScene {
 
     @Override
     public void create() {
-        if (Musics.MENU.isPlaying())
-            Musics.MENU.stop();
+        if (Sounds.MAIN_MENU.isPlaying())
+            Sounds.MAIN_MENU.stop();
     }
 
     @Override

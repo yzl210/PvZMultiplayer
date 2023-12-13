@@ -5,12 +5,19 @@ import io.netty.buffer.ByteBuf;
 
 public abstract class Plant extends Entity {
 
+    protected PlantState state = PlantState.IDLE;
+
+
     public Plant(PlantContext context) {
         super(context);
     }
 
     public Plant(ByteBuf buf) {
         super(buf);
+    }
+
+    public PlantState getState() {
+        return state;
     }
 
     @Override
@@ -21,11 +28,17 @@ public abstract class Plant extends Entity {
     @Override
     public void write(ByteBuf buf) {
         super.write(buf);
+        buf.writeInt(state.ordinal());
     }
 
     @Override
     public void read(ByteBuf buf) {
         super.read(buf);
+        PlantState newState = PlantState.values()[buf.readInt()];
+        if (newState != state) {
+            state = newState;
+            texture = type().texture(state);
+        }
     }
 
     public abstract PlantType<?> type();

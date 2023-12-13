@@ -9,7 +9,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Scaling;
@@ -57,13 +56,6 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
         sceneManager.setScene(new MainMenuScene());
     }
 
-    private BitmapFont generateFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/calibri.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 128;
-        return generator.generateFont(parameter);
-    }
-
     @Override
     public void render() {
         while (!tasksQueue.isEmpty())
@@ -71,6 +63,13 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
         ScreenUtils.clear(0, 0, 0, 1);
         sceneManager.render();
         Gdx.graphics.setTitle(sceneManager.getTitle());
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        float aspectRatio = (float) Constants.WIDTH / (float) Constants.HEIGHT;
+        viewport.update(width, height, true);
+        Gdx.graphics.setWindowedMode(width, (int) (width / aspectRatio));
     }
 
     @Override

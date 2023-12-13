@@ -8,6 +8,7 @@ import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombie;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.ZombieType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombies;
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
@@ -23,12 +24,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class World {
 
@@ -38,6 +42,8 @@ public class World {
     private final Map<Integer, Entity> entities = new ConcurrentSkipListMap<>();
 
     private final Table<Integer, Integer, Plant> plants = HashBasedTable.create();
+    private final Multimap<Integer, Zombie> zombies = HashMultimap.create();
+
     private NinePatch background;
 
     public World(GameSession session) {
@@ -82,8 +88,9 @@ public class World {
 
     public void spawnZombie(int lane, ZombieType<?> type) {
         int y = lane * 100 + 50;
-        int x = Constants.WIDTH - 200;
-        addEntity(type.create(new EntityCreationContext() {
+        int x = Constants.WIDTH;
+
+        Zombie zombie = type.create(new EntityCreationContext() {
             @Override
             public Vector2 position() {
                 return new Vector2(x, y);
@@ -93,8 +100,10 @@ public class World {
             public World world() {
                 return World.this;
             }
-        }));
+        });
 
+        zombies.put(lane, zombie);
+        addEntity(zombie);
     }
 
 
@@ -116,8 +125,17 @@ public class World {
         return entities.values();
     }
 
+    public Collection<Zombie> getZombies(int lane) {
+        return zombies.get(lane);
+    }
+
     public void removeEntity(int id) {
-        entities.remove(id);
+        Entity entity = entities.remove(id);
+        if (entity instanceof Plant plant)
+            plants.values().remove(plant);
+        else if (entity instanceof Zombie zombie)
+            zombies.values().remove(zombie);
+
         if (isServer())
             ServerManager.get().getPlayerList().sendPacket(new ClientboundRemoveEntityPacket(id));
     }
@@ -133,7 +151,7 @@ public class World {
         entities.forEach((id, entity) -> sync(entity));
         timer++;
         if (timer % 100 == 0)
-            spawnZombie(0, Zombies.NORMAL);
+            spawnZombie(ThreadLocalRandom.current().nextInt(5), Zombies.NORMAL);
         // Add zombie for testing
 
     }

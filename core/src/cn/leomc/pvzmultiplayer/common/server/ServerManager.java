@@ -1,8 +1,10 @@
 package cn.leomc.pvzmultiplayer.common.server;
 
 import cn.leomc.pvzmultiplayer.common.Constants;
+import cn.leomc.pvzmultiplayer.common.game.audio.Audio;
 import cn.leomc.pvzmultiplayer.common.networking.ChannelInitializer;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
+import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundPlaySoundPacket;
 import cn.leomc.pvzmultiplayer.common.server.networking.ServerConnectionHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -44,9 +46,15 @@ public class ServerManager {
         playerList.sendPacket(packet);
     }
 
+    public void playSound(Audio audio) {
+        sendPacket(new ClientboundPlaySoundPacket(audio.id()));
+    }
+
+
     public PlayerList getPlayerList() {
         return playerList;
     }
+
 
     public static ServerManager get() {
         return PvZMultiplayerServer.getInstance().getServerManager();

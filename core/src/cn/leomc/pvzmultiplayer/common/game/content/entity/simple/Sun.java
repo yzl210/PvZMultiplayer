@@ -2,9 +2,11 @@ package cn.leomc.pvzmultiplayer.common.game.content.entity.simple;
 
 import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.common.game.GameManager;
+import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Interactable;
+import cn.leomc.pvzmultiplayer.common.server.ServerManager;
 import io.netty.buffer.ByteBuf;
 
 public class Sun extends Entity implements Interactable {
@@ -56,8 +58,11 @@ public class Sun extends Entity implements Interactable {
     }
 
     public void collect() {
-        clicked = true;
-        velocity.set(-(position.x / 20f), (Constants.HEIGHT - 50 - position.y) / 20f);
+        if (!clicked) {
+            clicked = true;
+            velocity.set(-(position.x / 20f), (Constants.HEIGHT - 50 - position.y) / 20f);
+            ServerManager.get().playSound(Sounds.SUN_COLLECT);
+        }
     }
 
     @Override

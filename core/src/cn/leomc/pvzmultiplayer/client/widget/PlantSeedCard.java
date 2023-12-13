@@ -4,6 +4,7 @@ import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
+import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -46,8 +47,10 @@ public class PlantSeedCard extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 if (selected.get() == plant)
                     callback.accept(null);
-                else if (ClientGameManager.get().getSun() >= plant.sun())
+                else if (ClientGameManager.get().getSun() >= plant.sun()) {
                     callback.accept(plant);
+                    Sounds.SEED_SELECT.play();
+                }
             }
         });
     }

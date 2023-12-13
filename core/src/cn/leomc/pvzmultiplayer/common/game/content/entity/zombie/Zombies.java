@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Zombies {
 
     public static final ZombieType<Zombie> NORMAL = ZombieType.builder()
-            .id("flag")
+            .id("normal")
             .sun(50)
             .health(10)
             .damage(1)

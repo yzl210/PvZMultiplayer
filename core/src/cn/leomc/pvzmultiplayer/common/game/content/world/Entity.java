@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.game.content.world;
 
+import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import cn.leomc.pvzmultiplayer.common.Constants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
@@ -7,6 +8,8 @@ import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import cn.leomc.pvzmultiplayer.common.networking.util.ByteBufUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -49,7 +52,7 @@ public abstract class Entity {
 
     public void tickCollision() {
         for (Entity entity : world.getEntities())
-            if (entity != this && box.overlaps(entity.box))
+            if (entity != this && entity.getLane() == getLane() && box.overlaps(entity.box))
                 onCollide(entity);
     }
 
@@ -86,6 +89,18 @@ public abstract class Entity {
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(x, y, type().dimension().x, type().dimension().y);
         shapeRenderer.end();
+
+        Gdx.gl.glLineWidth(1);
+        SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
+        BitmapFont font = PvZMultiplayerClient.getInstance().getFont();
+
+        String text = String.valueOf(id);
+        if (type().hasHealth())
+            text += " " + health + "/" + type().health();
+
+        batch.begin();
+        font.draw(batch, text, position.x, position.y + type().dimension().y + 20);
+        batch.end();
     }
 
 
@@ -99,6 +114,10 @@ public abstract class Entity {
         health -= amount;
         if (health <= 0)
             world.removeEntity(this);
+    }
+
+    public int getLane() {
+        return (int) (position.y / Map.DEFAULT.plantGridDimension().y);
     }
 
     public void write(ByteBuf buf) {
@@ -124,6 +143,10 @@ public abstract class Entity {
 
     public Vector2 position() {
         return position;
+    }
+
+    public double health() {
+        return health;
     }
 
     public int id() {

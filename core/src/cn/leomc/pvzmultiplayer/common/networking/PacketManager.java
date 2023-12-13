@@ -56,6 +56,7 @@ public class PacketManager {
         register(ClientboundUpdateEntityPacket.class, ClientboundUpdateEntityPacket::new);
         register(ClientboundSunPacket.class, ClientboundSunPacket::new);
         register(ServerboundEntityInteractPacket.class, ServerboundEntityInteractPacket::new);
+        register(ClientboundPlaySoundPacket.class, ClientboundPlaySoundPacket::new);
     }
 
 }

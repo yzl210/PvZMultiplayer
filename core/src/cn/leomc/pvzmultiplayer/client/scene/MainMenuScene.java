@@ -1,7 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
-import cn.leomc.pvzmultiplayer.client.Musics;
+import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -60,8 +60,8 @@ public class MainMenuScene extends BaseScene {
         });
         stage.addActor(joinButton);
 
-        if (!Musics.MENU.isPlaying())
-            Musics.MENU.play();
+        if (!Sounds.MAIN_MENU.isPlaying())
+            Sounds.MAIN_MENU.play();
     }
 
     @Override

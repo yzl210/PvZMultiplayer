@@ -10,7 +10,11 @@ public class EventLoop {
     public void loop() {
         while (true) {
             long start = System.nanoTime();
-            tick();
+            try {
+                tick();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             long end = System.nanoTime();
             long sleep = 1000000000 / Constants.TPS - (end - start);
             while (System.nanoTime() - end < sleep)

@@ -44,6 +44,8 @@ public class World {
     private final Table<Integer, Integer, Plant> plants = HashBasedTable.create();
     private final Multimap<Integer, Zombie> zombies = HashMultimap.create();
 
+    private final Map<Integer, Entity> clientEntities = new ConcurrentSkipListMap<>();
+
     private NinePatch background;
 
     public World(GameSession session) {
@@ -117,6 +119,11 @@ public class World {
             ServerManager.get().getPlayerList().sendPacket(new ClientboundAddEntityPacket(entity));
     }
 
+    public void addClientEntity(Entity entity) {
+        entity.loadResources();
+        clientEntities.put(entity.id(), entity);
+    }
+
     public Entity getEntity(int id) {
         return entities.get(id);
     }
@@ -144,6 +151,10 @@ public class World {
         removeEntity(entity.id());
     }
 
+    public void removeClientEntity(int id) {
+        clientEntities.remove(id);
+    }
+
     int timer = 0;
 
     public void tick() {
@@ -156,8 +167,13 @@ public class World {
 
     }
 
+    public void clientTick() {
+        clientEntities.values().forEach(Entity::clientTick);
+    }
+
     public void loadResources() {
         entities.values().forEach(Entity::loadResources);
+        clientEntities.values().forEach(Entity::loadResources);
         background = new NinePatch(new TextureRegion(new Texture("backgrounds/game.png"), 175, 0, 950, 600));
     }
 
@@ -166,7 +182,15 @@ public class World {
         batch.begin();
         background.draw(batch, 0, 0, Constants.WIDTH, Constants.HEIGHT - 75);
         batch.end();
-        entities.values().forEach(Entity::render);
+        entities.values().forEach(entity -> {
+            try {
+                entity.render();
+            } catch (Exception e) {
+                System.err.println("Error rendering entity " + entity.id() + ", " + entity.type().id());
+                e.printStackTrace();
+            }
+        });
+        clientEntities.values().forEach(Entity::render);
     }
 
     public void write(ByteBuf buf) {

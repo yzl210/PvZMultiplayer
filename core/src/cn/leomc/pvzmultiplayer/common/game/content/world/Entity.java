@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.game.content.world;
 
+import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import cn.leomc.pvzmultiplayer.common.Constants;
@@ -41,6 +42,7 @@ public abstract class Entity {
     }
 
     public Entity(ByteBuf buf) {
+        world = ClientGameManager.get().getWorld();
         read(buf);
     }
 
@@ -50,6 +52,9 @@ public abstract class Entity {
         box.setPosition(position);
     }
 
+    public void clientTick() {
+    }
+
     public void tickCollision() {
         for (Entity entity : world.getEntities())
             if (entity != this && entity.getLane() == getLane() && box.overlaps(entity.box))
@@ -57,7 +62,7 @@ public abstract class Entity {
     }
 
     public void loadResources() {
-        texture = type().texture();
+        texture = getTexture();
     }
 
     public void unloadResources() {
@@ -67,7 +72,7 @@ public abstract class Entity {
 
     ShapeRenderer shapeRenderer;
 
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public void render() {
         float interpolation = timeElapsed / Constants.TICK_DURATION;
@@ -92,6 +97,8 @@ public abstract class Entity {
         shapeRenderer.rect(position.x, position.y, dimension.x, dimension.y);
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(x, y, dimension.x, dimension.y);
+        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.circle(x, y, 3f);
         shapeRenderer.end();
 
         Gdx.gl.glLineWidth(1);
@@ -109,6 +116,10 @@ public abstract class Entity {
 
     public Vector2 getDimension() {
         return type().dimension();
+    }
+
+    public Renderable getTexture() {
+        return type().texture();
     }
 
 

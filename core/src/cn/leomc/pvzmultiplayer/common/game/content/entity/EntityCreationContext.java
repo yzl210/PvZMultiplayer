@@ -7,4 +7,19 @@ public interface EntityCreationContext {
     Vector2 position();
 
     World world();
+
+    static EntityCreationContext of(Vector2 position, World world) {
+        return new EntityCreationContext() {
+            @Override
+            public Vector2 position() {
+                return position;
+            }
+
+            @Override
+            public World world() {
+                return world;
+            }
+        };
+    }
+
 }

@@ -57,12 +57,16 @@ public class AnimatedTexture implements Renderable {
         timeElapsed = frame * frameDuration;
     }
 
+    public int getKeyFrame() {
+        return animation.getKeyFrameIndex(timeElapsed);
+    }
+
     @Override
     public void render(float x, float y) {
         if (animation == null)
             load();
         timeElapsed += Gdx.graphics.getDeltaTime();
-        TextureRegion region = animation.getKeyFrame(timeElapsed, true);
+        TextureRegion region = animation.getKeyFrame(timeElapsed);
         SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
         batch.begin();
         batch.setColor(1, 1, 1, alpha);
@@ -76,7 +80,7 @@ public class AnimatedTexture implements Renderable {
         if (animation == null)
             load();
         timeElapsed += Gdx.graphics.getDeltaTime();
-        TextureRegion region = animation.getKeyFrame(timeElapsed, true);
+        TextureRegion region = animation.getKeyFrame(timeElapsed);
         SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
         batch.begin();
         batch.setColor(1, 1, 1, alpha);

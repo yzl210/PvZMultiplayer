@@ -26,8 +26,15 @@ public class SimpleEntities {
             .entityClass(Sun.class)
             .build();
 
+    public static final SimpleEntityType<ClientEntity> CLIENT_ENTITY = SimpleEntityType.<ClientEntity>builder()
+            .constructor(ClientEntity::new)
+            .deserializer(ClientEntity::new)
+            .entityClass(ClientEntity.class)
+            .build();
+
     public static void register() {
         EntityManager.register(PEA);
         EntityManager.register(SUN);
+        EntityManager.register(CLIENT_ENTITY);
     }
 }

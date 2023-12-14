@@ -153,6 +153,7 @@ public class ClientGameManager extends EventLoop {
     @Override
     public void tick() {
         super.tick();
+        world.clientTick();
     }
 
     public World getWorld() {

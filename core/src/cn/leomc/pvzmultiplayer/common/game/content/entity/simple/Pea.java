@@ -33,7 +33,7 @@ public class Pea extends Entity {
 
     @Override
     public void onCollide(Entity entity) {
-        if (state == 0 && entity instanceof Zombie zombie) {
+        if (state == 0 && entity instanceof Zombie zombie && !zombie.isDead()) {
             state = 1;
             velocity.set(0, 0);
             zombie.damage(1);

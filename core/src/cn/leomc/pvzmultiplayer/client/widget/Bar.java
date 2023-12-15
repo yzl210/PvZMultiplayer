@@ -5,33 +5,41 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import java.util.function.Consumer;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bar extends HorizontalGroup {
     private final Skin skin;
-    private final IntSupplier sun;
-    private final Supplier<PlantType<?>> selected;
-    private final Consumer<PlantType<?>> callback;
+    private final BarCallback callback;
 
     private final SunCard sunCard;
+    private final ShovelSlot shovelSlot;
 
-    public Bar(IntSupplier sun, Supplier<PlantType<?>> selected, Consumer<PlantType<?>> callback, Skin skin) {
-        this.sun = sun;
-        this.selected = selected;
+    public Bar(BarCallback callback, Skin skin) {
         this.callback = callback;
         this.skin = skin;
-        this.sunCard = new SunCard(sun, skin);
+        this.sunCard = new SunCard(callback::sun, skin);
         sunCard.setScale(getScaleX() + 0.5f, getScaleY() + 0.5f);
         addActor(sunCard);
+        this.shovelSlot = new ShovelSlot(callback::shovelSelected, callback::selectShovel);
+        shovelSlot.setScale(getScaleX(), getScaleY());
+        addActor(shovelSlot);
     }
 
     public void addPlant(PlantType<?> plant) {
-        PlantSeedCard plantSeedCard = new PlantSeedCard(plant, sun, selected, callback, skin);
+        PlantSeedCard plantSeedCard = new PlantSeedCard(plant, callback::sun, callback::selectedPlant, callback::selectPlant, skin);
         plantSeedCard.setScale(getScaleX(), getScaleY());
-        addActor(plantSeedCard);
+        addActorBefore(shovelSlot, plantSeedCard);
         pack();
+    }
+
+    public List<PlantSeedCard> getPlantSeeds() {
+        List<PlantSeedCard> cards = new ArrayList<>();
+        for (Actor child : getChildren()) {
+            if (child instanceof PlantSeedCard)
+                cards.add((PlantSeedCard) child);
+        }
+        return cards;
     }
 
     @Override
@@ -43,4 +51,17 @@ public class Bar extends HorizontalGroup {
         }
         pack();
     }
+
+    public interface BarCallback {
+        int sun();
+
+        void selectPlant(PlantType<?> plant);
+
+        PlantType<?> selectedPlant();
+
+        boolean shovelSelected();
+
+        void selectShovel(boolean shovel);
+    }
+
 }

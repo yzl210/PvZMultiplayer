@@ -55,6 +55,10 @@ public class PlantSeedCard extends Table {
         });
     }
 
+    public PlantType<?> getPlant() {
+        return plant;
+    }
+
     @Override
     public float getPrefWidth() {
         return 100 * getScaleX();

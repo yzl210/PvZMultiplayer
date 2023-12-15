@@ -6,16 +6,10 @@ import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ClientboundGameStatePacket implements Packet {
-
-    private final GameState state;
-
-    public ClientboundGameStatePacket(GameState state) {
-        this.state = state;
-    }
+public record ClientboundGameStatePacket(GameState state) implements Packet {
 
     public ClientboundGameStatePacket(ByteBuf buf) {
-        this.state = GameState.values()[buf.readInt()];
+        this(GameState.values()[buf.readInt()]);
     }
 
     @Override

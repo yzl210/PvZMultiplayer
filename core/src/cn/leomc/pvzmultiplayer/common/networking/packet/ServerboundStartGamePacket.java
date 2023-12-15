@@ -6,12 +6,10 @@ import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ServerboundStartGamePacket implements Packet {
-
-    public ServerboundStartGamePacket() {
-    }
+public record ServerboundStartGamePacket() implements Packet {
 
     public ServerboundStartGamePacket(ByteBuf buf) {
+        this();
     }
 
     @Override

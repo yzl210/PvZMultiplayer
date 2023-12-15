@@ -6,19 +6,10 @@ import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ServerboundGameSettingsPacket implements Packet {
-
-    private final GameSettings settings;
-
-
-    public ServerboundGameSettingsPacket(GameSettings settings) {
-        this.settings = settings;
-    }
-
+public record ServerboundGameSettingsPacket(GameSettings settings) implements Packet {
 
     public ServerboundGameSettingsPacket(ByteBuf buf) {
-        GameSettings.GameMode mode = GameSettings.GameMode.values()[buf.readInt()];
-        settings = mode.read(buf);
+        this(GameSettings.GameMode.values()[buf.readInt()].read(buf));
     }
 
     @Override

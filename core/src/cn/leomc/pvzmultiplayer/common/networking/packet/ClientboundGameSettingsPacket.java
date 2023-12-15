@@ -6,19 +6,11 @@ import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ClientboundGameSettingsPacket implements Packet {
-
-    private final GameSettings settings;
-
-
-    public ClientboundGameSettingsPacket(GameSettings settings) {
-        this.settings = settings;
-    }
+public record ClientboundGameSettingsPacket(GameSettings settings) implements Packet {
 
 
     public ClientboundGameSettingsPacket(ByteBuf buf) {
-        GameSettings.GameMode mode = GameSettings.GameMode.values()[buf.readInt()];
-        settings = mode.read(buf);
+        this(GameSettings.GameMode.values()[buf.readInt()].read(buf));
     }
 
     @Override
@@ -32,10 +24,6 @@ public class ClientboundGameSettingsPacket implements Packet {
         runLaterClient(() -> {
             ClientGameManager.get().setGameSettings(settings);
             ClientGameManager.get().reloadGameSettings();
-//            PvZMultiplayerClient.getInstance().runLater(() -> {
-//                if (SceneManager.get().getCurrentScene() instanceof LobbyScene scene)
-//                    scene.refreshSettings();
-//            });
         });
     }
 }

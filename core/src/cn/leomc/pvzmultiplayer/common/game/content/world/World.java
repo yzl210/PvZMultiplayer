@@ -88,6 +88,19 @@ public class World {
         addEntity(plant);
     }
 
+    public boolean shovel(int x, int y) {
+        if (x < 0 || y < 0 || x > 8 || y > 4)
+            return false;
+
+        Plant plant = plants.get(x, y);
+        if (plant == null)
+            return false;
+
+        plants.remove(x, y);
+        removeEntity(plant);
+        return true;
+    }
+
     public void spawnZombie(int lane, ZombieType<?> type) {
         int y = lane * 100 + 50;
         int x = Constants.WIDTH;

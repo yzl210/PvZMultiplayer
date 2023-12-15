@@ -10,22 +10,10 @@ import cn.leomc.pvzmultiplayer.common.server.ServerManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ServerboundPlantPacket implements Packet {
-
-    private final PlantType<?> type;
-    private final int x;
-    private final int y;
-
-    public ServerboundPlantPacket(PlantType<?> type, int x, int y) {
-        this.type = type;
-        this.x = x;
-        this.y = y;
-    }
+public record ServerboundPlantPacket(PlantType<?> type, int x, int y) implements Packet {
 
     public ServerboundPlantPacket(ByteBuf buf) {
-        type = (PlantType<?>) EntityManager.get(ByteBufUtils.readString(buf));
-        x = buf.readInt();
-        y = buf.readInt();
+        this((PlantType<?>) EntityManager.get(ByteBufUtils.readString(buf)), buf.readInt(), buf.readInt());
     }
 
     @Override

@@ -56,16 +56,17 @@ public class World {
         return session;
     }
 
-    public boolean plant(int x, int y, PlantType<?> type) {
+    public boolean canPlant(int x, int y) {
         if (x < 0 || y < 0 || x > 8 || y > 4)
             return false;
+        return !plants.contains(x, y);
+    }
 
-        if (plants.contains(x, y))
+    public boolean plant(int x, int y, PlantType<?> type) {
+        if (!canPlant(x, y) || session.getSun() < type.sun() || session.getCooldown(type) > 0)
             return false;
 
-        if (session.getSun() < type.sun())
-            return false;
-
+        session.addCooldown(type);
         session.setSun(session.getSun() - type.sun());
 
         Plant plant = type.create(new PlantContext() {
@@ -86,6 +87,10 @@ public class World {
     public void setPlant(int x, int y, Plant plant) {
         plants.put(x, y, plant);
         addEntity(plant);
+    }
+
+    public Plant getPlant(int x, int y) {
+        return plants.get(x, y);
     }
 
     public boolean shovel(int x, int y) {
@@ -242,4 +247,7 @@ public class World {
         return Thread.currentThread().equals(PvZMultiplayerClient.getRenderThread());
     }
 
+    public cn.leomc.pvzmultiplayer.common.game.content.world.Map getMap() {
+        return map;
+    }
 }

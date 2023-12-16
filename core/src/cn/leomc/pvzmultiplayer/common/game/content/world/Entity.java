@@ -57,7 +57,7 @@ public abstract class Entity {
 
     public void tickCollision() {
         for (Entity entity : world.getEntities())
-            if (entity != this && entity.getLane() == getLane() && box.overlaps(entity.box))
+            if (entity != this && entity.getRow() == getRow() && box.overlaps(entity.box))
                 onCollide(entity);
     }
 
@@ -135,9 +135,14 @@ public abstract class Entity {
             world.removeEntity(this);
     }
 
-    public int getLane() {
+    public int getColumn() {
+        return (int) ((position.x - Map.DEFAULT.plantGridTopLeft().x) / Map.DEFAULT.plantGridDimension().x);
+    }
+
+    public int getRow() {
         return (int) (position.y / Map.DEFAULT.plantGridDimension().y);
     }
+
 
     public void write(ByteBuf buf) {
         buf.writeInt(id);

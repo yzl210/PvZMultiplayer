@@ -4,12 +4,9 @@ import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
-import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
@@ -47,10 +45,8 @@ public class PlantSeedCard extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 if (selected.get() == plant)
                     callback.accept(null);
-                else if (ClientGameManager.get().getSun() >= plant.sun()) {
+                else
                     callback.accept(plant);
-                    Sounds.SEED_SELECT.play();
-                }
             }
         });
     }
@@ -77,15 +73,18 @@ public class PlantSeedCard extends Table {
         plantTexture.render(getX() + 10, getY() + (getHeight() / 4), plant.dimension().x * getScaleX(), plant.dimension().y * getScaleY());
         batch.begin();
         super.draw(batch, parentAlpha);
-        batch.flush();
         boolean enoughSun = sun.getAsInt() >= plant.sun();
+        float alpha = enoughSun ? 0.4f : 0.6f;
         if (!enoughSun || selected.get() == plant) {
-            float alpha = enoughSun ? 0.4f : 0.6f;
-            ShapeRenderer shapeRenderer = PvZMultiplayerClient.getInstance().getShapeRenderer();
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(0, 0, 0, alpha);
-            shapeRenderer.rect(getX() * getScaleX(), (Gdx.graphics.getHeight() - getY()) - getHeight() * getScaleY(), getWidth() * getScaleX(), getHeight() * getScaleY());
-            shapeRenderer.end();
+            ShapeDrawer shapeDrawer = PvZMultiplayerClient.getInstance().getShapeDrawer();
+            shapeDrawer.setColor(0, 0, 0, alpha);
+            shapeDrawer.filledRectangle(getX(), getY(), getWidth(), getHeight());
+        }
+        if (ClientGameManager.get().getPlantSeedCooldown(plant) > 0) {
+            float cooldownPercent = (float) ClientGameManager.get().getPlantSeedCooldown(plant) / plant.seedRechargeTicks();
+            ShapeDrawer shapeDrawer = PvZMultiplayerClient.getInstance().getShapeDrawer();
+            shapeDrawer.setColor(0, 0, 0, alpha);
+            shapeDrawer.filledRectangle(getX(), getY() + (getHeight() * (1 - cooldownPercent)), getWidth(), getHeight() * cooldownPercent);
         }
     }
 

@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import cn.leomc.pvzmultiplayer.client.widget.Bar;
@@ -16,8 +17,10 @@ import cn.leomc.pvzmultiplayer.common.networking.packet.world.ServerboundShovelP
 import cn.leomc.pvzmultiplayer.common.text.component.Component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class CollaborativeGameScene extends BaseScene {
 
@@ -62,8 +65,8 @@ public class CollaborativeGameScene extends BaseScene {
                 selectedShovel = shovel;
             }
         }, getSkin());
-        bar.addPlant(Plants.PEASHOOTER);
         bar.addPlant(Plants.SUNFLOWER);
+        bar.addPlant(Plants.PEASHOOTER);
         bar.setScale(0.9f);
         bar.setPosition(0, Gdx.graphics.getHeight() - bar.getHeight() * 0.9f);
 
@@ -78,30 +81,44 @@ public class CollaborativeGameScene extends BaseScene {
         ClientGameManager.get().getWorld().render();
         stage.act();
         stage.draw();
+
+        Vector2 mouse = PvZMultiplayerClient.getInstance().getViewport().unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+
         if (selectedShovel)
-            shovel.render(Gdx.input.getX() - 90, Gdx.graphics.getHeight() - Gdx.input.getY() - 25, 112, 32);
-        if (selectedPlant != null)
-            selectedPlant.texture().render(Gdx.input.getX() - 25, Gdx.graphics.getHeight() - Gdx.input.getY() - 25, selectedPlant.dimension().x, selectedPlant.dimension().y);
+            shovel.render(mouse.x - 90, mouse.y - 25, 112, 32);
+        if (selectedPlant != null) {
+            Vector2 gridPos = getGridPosition(mouse);
+            if (ClientGameManager.get().getWorld().canPlant((int) gridPos.x, (int) gridPos.y)) {
+                Map map = ClientGameManager.get().getWorld().getMap();
+                selectedPlant.texture().render(gridPos.x * map.plantGridDimension().x + map.plantGridTopLeft().x,
+                        gridPos.y * map.plantGridDimension().y + map.plantGridTopLeft().y,
+                        selectedPlant.dimension().x,
+                        selectedPlant.dimension().y,
+                        new Color(1, 1, 1, 0.5f));
+            }
+
+            selectedPlant.texture().render(mouse.x - 25, mouse.y - 25, selectedPlant.dimension().x, selectedPlant.dimension().y);
+        }
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        int realY = Gdx.graphics.getHeight() - screenY;
-        int gridY = realY - (int) Map.DEFAULT.plantGridTopLeft().y;
+    public boolean touchDown(int a, int b, int pointer, int button) {
+        Viewport viewport = PvZMultiplayerClient.getInstance().getViewport();
+        Vector2 mouse = viewport.unproject(new Vector2(a, b));
 
-        int gridX = screenX - (int) Map.DEFAULT.plantGridTopLeft().x;
+        int screenX = (int) mouse.x;
+        int screenY = (int) mouse.y;
 
-        int x = (int) (gridX / Map.DEFAULT.plantGridDimension().x);
-        int y = (int) (gridY / Map.DEFAULT.plantGridDimension().y);
+        Vector2 gridPos = getGridPosition(mouse);
 
         if (selectedShovel) {
-            ClientGameManager.get().getConnection().sendPacket(new ServerboundShovelPacket(x, y));
+            ClientGameManager.get().getConnection().sendPacket(new ServerboundShovelPacket((int) gridPos.x, (int) gridPos.y));
         }
 
         if (selectedPlant != null) {
-            if (x < 0 || y < 0 || x > 8 || y > 4)
+            if (gridPos.x < 0 || gridPos.y < 0 || gridPos.x > 8 || gridPos.y > 4)
                 return false;
-            ClientGameManager.get().getConnection().sendPacket(new ServerboundPlantPacket(selectedPlant, x, y));
+            ClientGameManager.get().getConnection().sendPacket(new ServerboundPlantPacket(selectedPlant, (int) gridPos.x, (int) gridPos.y));
             return true;
         }
 
@@ -109,12 +126,21 @@ public class CollaborativeGameScene extends BaseScene {
             if (entity instanceof Interactable) {
                 Vector2 position = entity.position();
                 Vector2 dimension = entity.type().dimension();
-                if (screenX >= position.x && screenX <= position.x + dimension.x && realY >= position.y && realY <= position.y + dimension.y)
-                    ClientGameManager.get().getConnection().sendPacket(new ServerboundEntityInteractPacket(entity.id(), screenX, realY, pointer, button));
+                if (screenX >= position.x && screenX <= position.x + dimension.x && screenY >= position.y && screenY <= position.y + dimension.y)
+                    ClientGameManager.get().getConnection().sendPacket(new ServerboundEntityInteractPacket(entity.id(), screenX, screenY, pointer, button));
             }
         });
 
         return false;
+    }
+
+    public Vector2 getGridPosition(Vector2 mouse) {
+        int gridX = (int) (mouse.x - Map.DEFAULT.plantGridTopLeft().x);
+        int gridY = (int) (mouse.y - Map.DEFAULT.plantGridTopLeft().y);
+
+        int x = (int) (gridX / Map.DEFAULT.plantGridDimension().x);
+        int y = (int) (gridY / Map.DEFAULT.plantGridDimension().y);
+        return new Vector2(x, y);
     }
 
     @Override
@@ -149,7 +175,7 @@ public class CollaborativeGameScene extends BaseScene {
     }
 
     public void selectPlant(PlantType<?> plant) {
-        if (ClientGameManager.get().getSun() < plant.sun() || plant == selectedPlant)
+        if ((plant != null && ClientGameManager.get().getSun() < plant.sun()) || plant == selectedPlant || ClientGameManager.get().getPlantSeedCooldown(plant) > 0)
             return;
         selectedPlant = plant;
         selectedShovel = false;

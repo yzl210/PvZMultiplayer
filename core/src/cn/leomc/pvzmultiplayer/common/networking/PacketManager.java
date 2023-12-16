@@ -59,6 +59,7 @@ public class PacketManager {
         register(ClientboundPlaySoundPacket.class, ClientboundPlaySoundPacket::new);
         register(ServerboundShovelPacket.class, ServerboundShovelPacket::new);
         register(ClientboundShovelPacket.class, ClientboundShovelPacket::new);
+        register(ClientboundPlantSeedsCooldownPacket.class, ClientboundPlantSeedsCooldownPacket::new);
     }
 
 }

@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.texture;
 
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -33,11 +34,18 @@ public class FixedTextureRegion implements Renderable {
 
     @Override
     public void render(float x, float y, float width, float height) {
+        render(x, y, width, height, Color.WHITE);
+    }
+
+    @Override
+    public void render(float x, float y, float width, float height, Color color) {
         if (region == null)
             load();
         SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
         batch.begin();
+        batch.setColor(color);
         batch.draw(region, x, y, width, height);
+        batch.setColor(Color.WHITE);
         batch.end();
     }
 

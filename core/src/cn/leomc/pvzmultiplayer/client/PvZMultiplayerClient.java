@@ -6,15 +6,19 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationLogger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,7 +30,7 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     private static PvZMultiplayerClient INSTANCE;
 
     private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
+    private ShapeDrawer shapeDrawer;
 
     private Skin skin;
     private BitmapFont font;
@@ -47,13 +51,22 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
     public void create() {
         LOGGER = Gdx.app.getApplicationLogger();
         batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
+        shapeDrawer = new ShapeDrawer(batch, generateWhite());
         skin = new Skin(Gdx.files.internal("skins/freezing/freezing-ui.json"));
         font = skin.getFont("font");
         inputMultiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(inputMultiplexer);
         viewport = new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
         sceneManager.setScene(new MainMenuScene());
+    }
+
+    private TextureRegion generateWhite() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.drawPixel(0, 0);
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return new TextureRegion(texture, 0, 0, 1, 1);
     }
 
     @Override
@@ -89,8 +102,8 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
         return batch;
     }
 
-    public ShapeRenderer getShapeRenderer() {
-        return shapeRenderer;
+    public ShapeDrawer getShapeDrawer() {
+        return shapeDrawer;
     }
 
     public BitmapFont getFont() {

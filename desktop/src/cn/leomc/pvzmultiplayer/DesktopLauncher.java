@@ -14,7 +14,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(Constants.FPS);
 		config.setWindowedMode(Constants.WIDTH, Constants.HEIGHT);
-		config.setResizable(false);
+		config.setResizable(true);
 		new Lwjgl3Application(new PvZMultiplayerClient(), config);
 	}
 }

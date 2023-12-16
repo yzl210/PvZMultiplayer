@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.client.texture;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.HashMap;
@@ -13,4 +14,6 @@ public interface Renderable {
     void render(float x, float y);
 
     void render(float x, float y, float width, float height);
+
+    void render(float x, float y, float width, float height, Color color);
 }

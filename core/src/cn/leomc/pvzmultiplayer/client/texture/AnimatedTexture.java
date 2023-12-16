@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.client.texture;
 
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -63,27 +64,23 @@ public class AnimatedTexture implements Renderable {
 
     @Override
     public void render(float x, float y) {
-        if (animation == null)
-            load();
-        timeElapsed += Gdx.graphics.getDeltaTime();
-        TextureRegion region = animation.getKeyFrame(timeElapsed);
-        SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
-        batch.begin();
-        batch.setColor(1, 1, 1, alpha);
-        batch.draw(region, x, y);
-        batch.setColor(1, 1, 1, 1);
-        batch.end();
+        render(x, y, animation.getKeyFrame(timeElapsed).getRegionWidth(), animation.getKeyFrame(timeElapsed).getRegionHeight());
     }
 
     @Override
     public void render(float x, float y, float width, float height) {
+        render(x, y, width, height, new Color(1, 1, 1, alpha));
+    }
+
+    @Override
+    public void render(float x, float y, float width, float height, Color color) {
         if (animation == null)
             load();
         timeElapsed += Gdx.graphics.getDeltaTime();
         TextureRegion region = animation.getKeyFrame(timeElapsed);
         SpriteBatch batch = PvZMultiplayerClient.getInstance().getBatch();
         batch.begin();
-        batch.setColor(1, 1, 1, alpha);
+        batch.setColor(color);
         batch.draw(region, x, y, width, height);
         batch.setColor(1, 1, 1, 1);
         batch.end();

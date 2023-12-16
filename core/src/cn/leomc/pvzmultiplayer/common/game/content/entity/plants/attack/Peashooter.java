@@ -31,11 +31,11 @@ public class Peashooter extends Plant {
     public void tick() {
         super.tick();
         isLastTickShooting = false;
-        if (world.getZombies(getLane()).isEmpty())
+        if (world.getZombies(getRow()).isEmpty())
             state = PlantState.IDLE;
         else
             state = PlantState.ATTACKING;
-        if (shootTimer > 0 || world.getZombies(getLane()).isEmpty()) {
+        if (shootTimer > 0 || world.getZombies(getRow()).isEmpty()) {
             shootTimer--;
             return;
         }

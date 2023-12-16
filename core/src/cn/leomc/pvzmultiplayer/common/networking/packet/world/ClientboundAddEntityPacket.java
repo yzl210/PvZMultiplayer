@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.common.networking.packet.world;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;
@@ -36,6 +37,8 @@ public class ClientboundAddEntityPacket implements Packet {
         runLaterClient(() -> {
             Entity entity = EntityManager.read(buf);
             ClientGameManager.get().getWorld().addEntity(entity);
+            if (entity instanceof Plant plant)
+                ClientGameManager.get().getWorld().setPlant(plant.getColumn(), plant.getRow(), plant);
             buf.release();
         });
     }

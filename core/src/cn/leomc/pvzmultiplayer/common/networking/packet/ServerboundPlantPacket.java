@@ -1,12 +1,10 @@
 package cn.leomc.pvzmultiplayer.common.networking.packet;
 
 import cn.leomc.pvzmultiplayer.common.game.GameManager;
-import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import cn.leomc.pvzmultiplayer.common.networking.util.ByteBufUtils;
-import cn.leomc.pvzmultiplayer.common.server.ServerManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -28,8 +26,6 @@ public record ServerboundPlantPacket(PlantType<?> type, int x, int y) implements
         runLaterServer(() -> {
             boolean success = GameManager.get().getGameSession().getWorld().plant(x, y, type);
             ctx.writeAndFlush(new ClientboundPlantPacket(success));
-            if (success)
-                ServerManager.get().playSound(Sounds.PLANT);
         });
     }
 }

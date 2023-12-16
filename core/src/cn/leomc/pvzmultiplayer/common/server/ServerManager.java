@@ -4,7 +4,7 @@ import cn.leomc.pvzmultiplayer.common.Constants;
 import cn.leomc.pvzmultiplayer.common.game.audio.Audio;
 import cn.leomc.pvzmultiplayer.common.networking.ChannelInitializer;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
-import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundPlaySoundPacket;
+import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundPlaySoundPacket;
 import cn.leomc.pvzmultiplayer.common.server.networking.ServerConnectionHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

@@ -10,6 +10,7 @@ public class Sounds {
     public static final Audio SHOOT = Audio.sound("shoot.ogg");
     public static final Audio SPLAT = Audio.multiple("splat");
     public static final Audio SUN_COLLECT = new Audio.RandomPitch(Audio.sound("sun_collect.ogg"), 0.75f, 1.5f);
+    public static final Audio SHOVEL = Audio.sound("shovel.ogg");
 
 
     public static void register() {
@@ -21,6 +22,7 @@ public class Sounds {
         AudioManager.register(SHOOT);
         AudioManager.register(SPLAT);
         AudioManager.register(SUN_COLLECT);
+        AudioManager.register(SHOVEL);
     }
 
 }

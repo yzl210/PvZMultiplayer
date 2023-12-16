@@ -61,12 +61,12 @@ public class CollaborativeGameScene extends BaseScene {
 
             @Override
             public void selectShovel(boolean shovel) {
-                selectedPlant = null;
-                selectedShovel = shovel;
+                CollaborativeGameScene.this.selectShovel(shovel);
             }
         }, getSkin());
         bar.addPlant(Plants.SUNFLOWER);
         bar.addPlant(Plants.PEASHOOTER);
+        bar.addPlant(Plants.WALLNUT);
         bar.setScale(0.9f);
         bar.setPosition(0, Gdx.graphics.getHeight() - bar.getHeight() * 0.9f);
 
@@ -149,7 +149,7 @@ public class CollaborativeGameScene extends BaseScene {
             selectedShovel = false;
             selectedPlant = null;
         } else if (keycode == Input.Keys.S)
-            selectShovel();
+            selectShovel(!selectedShovel);
         else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
             int i = keycode - Input.Keys.NUM_1;
             if (i < bar.getPlantSeeds().size())
@@ -169,9 +169,10 @@ public class CollaborativeGameScene extends BaseScene {
         stage.dispose();
     }
 
-    public void selectShovel() {
-        selectedShovel = !selectedShovel;
+    public void selectShovel(boolean selected) {
+        selectedShovel = selected;
         selectedPlant = null;
+        Sounds.SHOVEL.play();
     }
 
     public void selectPlant(PlantType<?> plant) {
@@ -183,19 +184,21 @@ public class CollaborativeGameScene extends BaseScene {
     }
 
     public void plantResult(boolean success) {
-        if (success)
+        if (success) {
             selectedPlant = null;
+            Sounds.PLANT.play();
+        }
     }
 
     public void shovelResult(boolean success) {
-        if (success)
+        if (success) {
             selectedShovel = false;
+            Sounds.PLANT.play();
+        }
     }
 
     @Override
     public Component getTitle() {
         return GameSettings.GameMode.COLLABORATIVE.getDisplayName();
     }
-
-
 }

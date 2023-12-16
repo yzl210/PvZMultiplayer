@@ -1,4 +1,4 @@
-package cn.leomc.pvzmultiplayer.common.networking.packet.world;
+package cn.leomc.pvzmultiplayer.common.networking.packet;
 
 import cn.leomc.pvzmultiplayer.common.game.audio.AudioManager;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;

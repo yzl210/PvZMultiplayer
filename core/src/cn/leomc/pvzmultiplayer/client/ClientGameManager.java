@@ -8,7 +8,7 @@ import cn.leomc.pvzmultiplayer.client.scene.MainMenuScene;
 import cn.leomc.pvzmultiplayer.common.EventLoop;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.GameState;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import cn.leomc.pvzmultiplayer.common.game.content.world.World;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.Team;
@@ -33,7 +33,7 @@ public class ClientGameManager extends EventLoop {
     private List<String> playerList;
     private int sun;
     private final World world = new World(null);
-    private final Map<PlantType<?>, Integer> plantSeedCooldowns = new HashMap<>();
+    private final Map<EntityType<?, ?>, Integer> entityCooldowns = new HashMap<>();
 
     public ClientGameManager() {
         clientTickThread.start();
@@ -172,17 +172,17 @@ public class ClientGameManager extends EventLoop {
         this.sun = sun;
     }
 
-    public void setPlantSeedCooldowns(Map<PlantType<?>, Integer> plantSeedCooldowns) {
-        this.plantSeedCooldowns.clear();
-        this.plantSeedCooldowns.putAll(plantSeedCooldowns);
+    public void setEntityCooldowns(Map<EntityType<?, ?>, Integer> entityCooldowns) {
+        this.entityCooldowns.clear();
+        this.entityCooldowns.putAll(entityCooldowns);
     }
 
-    public Map<PlantType<?>, Integer> getPlantSeedCooldowns() {
-        return plantSeedCooldowns;
+    public Map<EntityType<?, ?>, Integer> getEntityCooldowns() {
+        return entityCooldowns;
     }
 
-    public int getPlantSeedCooldown(PlantType<?> plant) {
-        return plantSeedCooldowns.getOrDefault(plant, 0);
+    public int getEntityCooldown(EntityType<?, ?> entity) {
+        return entityCooldowns.getOrDefault(entity, 0);
     }
 
 }

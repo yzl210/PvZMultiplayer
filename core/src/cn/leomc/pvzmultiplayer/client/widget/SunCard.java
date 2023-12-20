@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.client.widget;
 
+import cn.leomc.pvzmultiplayer.client.renderer.GameRenderer;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTextureRegion;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import com.badlogic.gdx.graphics.Color;
@@ -9,17 +10,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import java.util.function.IntSupplier;
-
 public class SunCard extends Table {
 
-    private final IntSupplier sun;
+    private final GameRenderer renderer;
     private final Renderable background;
     private final Label label;
 
-    public SunCard(IntSupplier sun, Skin skin) {
+    public SunCard(GameRenderer renderer, Skin skin) {
         setSize(76, 87);
-        this.sun = sun;
+        this.renderer = renderer;
         this.background = new FixedTextureRegion("textures/bar.png", 0, 0, 76, 87);
         this.label = new Label("", skin);
         label.setColor(Color.BLACK);
@@ -38,7 +37,7 @@ public class SunCard extends Table {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        label.setText(String.valueOf(sun.getAsInt()));
+        label.setText(String.valueOf(renderer.getPoints()));
         batch.end();
         background.render(getX(), getY(), getWidth(), getHeight());
         batch.begin();

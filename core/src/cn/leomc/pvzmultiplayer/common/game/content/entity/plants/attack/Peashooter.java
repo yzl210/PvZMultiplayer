@@ -4,7 +4,10 @@ import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
 import cn.leomc.pvzmultiplayer.common.Utils;
 import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.*;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantState;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.simple.Pea;
 import cn.leomc.pvzmultiplayer.common.game.content.world.World;
 import cn.leomc.pvzmultiplayer.common.server.ServerManager;
@@ -19,7 +22,7 @@ public class Peashooter extends Plant {
 
     private boolean isLastTickShooting = false;
 
-    public Peashooter(PlantContext context) {
+    public Peashooter(EntityCreationContext context) {
         super(context);
     }
 

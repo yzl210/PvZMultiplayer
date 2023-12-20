@@ -2,9 +2,10 @@ package cn.leomc.pvzmultiplayer.client.widget;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
+import cn.leomc.pvzmultiplayer.client.renderer.GameRenderer;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,26 +17,24 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-import java.util.function.Consumer;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
+public class EntityCard extends Table {
 
-public class PlantSeedCard extends Table {
-
-    private final IntSupplier sun;
-    private final Supplier<PlantType<?>> selected;
-    private final PlantType<?> plant;
+    private final GameRenderer renderer;
+    private final EntityType<?, ?> entity;
+    private final int cost;
+    private final int cooldown;
     private final Renderable background;
-    private final Renderable plantTexture;
+    private final Renderable entityTexture;
     private final Label label;
 
-    public PlantSeedCard(PlantType<?> plant, IntSupplier sun, Supplier<PlantType<?>> selected, Consumer<PlantType<?>> callback, Skin skin) {
-        this.sun = sun;
-        this.selected = selected;
+    public EntityCard(EntityType<?, ?> entity, GameRenderer renderer, Skin skin) {
+        this.renderer = renderer;
         this.background = new FixedTexture("textures/seedpack.png");
-        this.plant = plant;
-        this.plantTexture = plant.texture();
-        this.label = new Label(String.valueOf(plant.sun()), skin);
+        this.entity = entity;
+        this.entityTexture = entity.texture();
+        this.cost = renderer.getCost(entity);
+        this.cooldown = renderer.getCooldown(entity);
+        this.label = new Label(String.valueOf(cost), skin);
         label.setColor(Color.BLACK);
         align(Align.bottom).padBottom(5).add(label);
 
@@ -43,16 +42,14 @@ public class PlantSeedCard extends Table {
         addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (selected.get() == plant)
-                    callback.accept(null);
-                else
-                    callback.accept(plant);
+                if (renderer.getPoints() >= cost)
+                    renderer.selectEntity(renderer.getSelectedEntity() == entity ? null : entity);
             }
         });
     }
 
-    public PlantType<?> getPlant() {
-        return plant;
+    public EntityType<?, ?> getEntity() {
+        return entity;
     }
 
     @Override
@@ -68,20 +65,21 @@ public class PlantSeedCard extends Table {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
-        label.setColor(sun.getAsInt() >= plant.sun() ? Color.BLACK : Color.RED);
+        boolean enoughPoints = renderer.getPoints() >= cost;
+        label.setColor(enoughPoints ? Color.BLACK : Color.RED);
         background.render(getX(), getY(), getWidth(), getHeight());
-        plantTexture.render(getX() + 10, getY() + (getHeight() / 4), plant.dimension().x * getScaleX(), plant.dimension().y * getScaleY());
+        entityTexture.render(getX() + 10, getY() + (getHeight() / 4), entity.dimension().x * getScaleX(), entity.dimension().y * getScaleY());
         batch.begin();
         super.draw(batch, parentAlpha);
-        boolean enoughSun = sun.getAsInt() >= plant.sun();
-        float alpha = enoughSun ? 0.4f : 0.6f;
-        if (!enoughSun || selected.get() == plant) {
+
+        float alpha = enoughPoints ? 0.4f : 0.6f;
+        if (!enoughPoints || renderer.getSelectedEntity() == entity) {
             ShapeDrawer shapeDrawer = PvZMultiplayerClient.getInstance().getShapeDrawer();
             shapeDrawer.setColor(0, 0, 0, alpha);
             shapeDrawer.filledRectangle(getX(), getY(), getWidth(), getHeight());
         }
-        if (ClientGameManager.get().getPlantSeedCooldown(plant) > 0) {
-            float cooldownPercent = (float) ClientGameManager.get().getPlantSeedCooldown(plant) / plant.seedRechargeTicks();
+        if (ClientGameManager.get().getEntityCooldown(entity) > 0) {
+            float cooldownPercent = (float) ClientGameManager.get().getEntityCooldown(entity) / cooldown;
             ShapeDrawer shapeDrawer = PvZMultiplayerClient.getInstance().getShapeDrawer();
             shapeDrawer.setColor(0, 0, 0, alpha);
             shapeDrawer.filledRectangle(getX(), getY() + (getHeight() * (1 - cooldownPercent)), getWidth(), getHeight() * cooldownPercent);
@@ -93,5 +91,4 @@ public class PlantSeedCard extends Table {
         label.setFontScale(getScaleX(), getScaleY());
         pack();
     }
-
 }

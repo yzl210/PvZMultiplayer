@@ -36,8 +36,12 @@ public class CompetitiveGameSettings extends GameSettings {
         setPlayerTeam(player, team);
     }
 
-    public List<String> getPlayers(Team team) {
+    public List<String> getPlayersNames(Team team) {
         return List.copyOf(playerTeam.get(team));
+    }
+
+    public List<ServerPlayer> getPlayers(Team team) {
+        return getPlayersNames(team).stream().map(ServerManager.get().getPlayerList()::getPlayer).toList();
     }
 
     public Team getTeam(String player) {
@@ -45,7 +49,7 @@ public class CompetitiveGameSettings extends GameSettings {
     }
 
     public boolean canStart() {
-        return Arrays.stream(Team.values()).noneMatch(team -> playerTeam.get(team).isEmpty());
+        return true; //TODO: Arrays.stream(Team.values()).noneMatch(team -> playerTeam.get(team).isEmpty());
     }
 
     @Override

@@ -4,13 +4,14 @@ import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityBuilder;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.EnumMap;
 import java.util.function.Supplier;
 
-public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> {
+public interface PlantType<T extends Plant> extends EntityType<T, EntityCreationContext> {
 
     int sun();
 
@@ -22,7 +23,7 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
         return new PlantBuilder<>();
     }
 
-    class PlantBuilder<T extends Plant> extends EntityBuilder<PlantBuilder<T>, T, PlantType<T>, PlantContext> {
+    class PlantBuilder<T extends Plant> extends EntityBuilder<PlantBuilder<T>, T, PlantType<T>, EntityCreationContext> {
         private int sun;
         private int seedRechargeTicks;
         private final EnumMap<PlantState, Supplier<Renderable>> textures = new EnumMap<>(PlantState.class);
@@ -59,7 +60,7 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
         }
 
         public PlantType<T> build() {
-            EntityType<T, PlantContext> type = super.build();
+            EntityType<T, EntityCreationContext> type = super.build();
             return new PlantType<>() {
                 @Override
                 public int sun() {
@@ -82,7 +83,7 @@ public interface PlantType<T extends Plant> extends EntityType<T, PlantContext> 
                 }
 
                 @Override
-                public EntityType<T, PlantContext> self() {
+                public EntityType<T, EntityCreationContext> self() {
                     return type;
                 }
             };

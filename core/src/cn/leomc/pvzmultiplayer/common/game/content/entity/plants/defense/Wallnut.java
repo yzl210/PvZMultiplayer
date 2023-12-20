@@ -1,8 +1,8 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.plants.defense;
 
 import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
+import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plants;
 import io.netty.buffer.ByteBuf;
@@ -11,7 +11,7 @@ public class Wallnut extends Plant {
 
     private byte lastState = 0;
 
-    public Wallnut(PlantContext context) {
+    public Wallnut(EntityCreationContext context) {
         super(context);
     }
 

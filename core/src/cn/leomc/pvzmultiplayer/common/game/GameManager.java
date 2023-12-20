@@ -12,7 +12,7 @@ public class GameManager {
 
     private GameState state = GameState.LOBBY;
     private GameSettings settings;
-    private GameSession session;
+    private GameSession<?> session;
 
 
     public void tick() {
@@ -51,7 +51,7 @@ public class GameManager {
         return settings;
     }
 
-    public GameSession getGameSession() {
+    public GameSession<?> getGameSession() {
         return session;
     }
 

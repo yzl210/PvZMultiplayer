@@ -3,7 +3,6 @@ package cn.leomc.pvzmultiplayer.common.game.content.entity.plants.resource;
 import cn.leomc.pvzmultiplayer.common.Utils;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.simple.Sun;
@@ -19,7 +18,7 @@ public class Sunflower extends Plant {
 
     private int sunTimer = SUN_INTERVAL / 2;
 
-    public Sunflower(PlantContext context) {
+    public Sunflower(EntityCreationContext context) {
         super(context);
     }
 

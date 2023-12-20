@@ -6,11 +6,8 @@ import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plant;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantContext;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombie;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.ZombieType;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombies;
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundAddEntityPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ClientboundRemoveEntityPacket;
@@ -32,11 +29,10 @@ import io.netty.buffer.ByteBuf;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class World {
 
-    private final GameSession session;
+    private final GameSession<?> session;
     private final cn.leomc.pvzmultiplayer.common.game.content.world.Map map = cn.leomc.pvzmultiplayer.common.game.content.world.Map.DEFAULT;
 
     private final Map<Integer, Entity> entities = new ConcurrentSkipListMap<>();
@@ -48,11 +44,11 @@ public class World {
 
     private NinePatch background;
 
-    public World(GameSession session) {
+    public World(GameSession<?> session) {
         this.session = session;
     }
 
-    public GameSession getGameSession() {
+    public GameSession<?> getGameSession() {
         return session;
     }
 
@@ -60,28 +56,6 @@ public class World {
         if (x < 0 || y < 0 || x > 8 || y > 4)
             return false;
         return !plants.contains(x, y);
-    }
-
-    public boolean plant(int x, int y, PlantType<?> type) {
-        if (!canPlant(x, y) || session.getSun() < type.sun() || session.getCooldown(type) > 0)
-            return false;
-
-        session.addCooldown(type);
-        session.setSun(session.getSun() - type.sun());
-
-        Plant plant = type.create(new PlantContext() {
-            @Override
-            public Vector2 position() {
-                return new Vector2(x * map.plantGridDimension().x + map.plantGridTopLeft().x, y * map.plantGridDimension().y + map.plantGridTopLeft().y);
-            }
-
-            @Override
-            public World world() {
-                return World.this;
-            }
-        });
-        setPlant(x, y, plant);
-        return true;
     }
 
     public void setPlant(int x, int y, Plant plant) {
@@ -106,7 +80,7 @@ public class World {
         return true;
     }
 
-    public void spawnZombie(int lane, ZombieType<?> type) {
+    public void spawnZombie(ZombieType<?> type, int lane) {
         int y = lane * 100 + 50;
         int x = Constants.WIDTH;
 
@@ -173,16 +147,9 @@ public class World {
         clientEntities.remove(id);
     }
 
-    int timer = 0;
-
     public void tick() {
         entities.values().forEach(Entity::tick);
         entities.forEach((id, entity) -> sync(entity));
-        timer++;
-        if (timer % 100 == 0)
-            spawnZombie(ThreadLocalRandom.current().nextInt(5), Zombies.NORMAL);
-        // Add zombie for testing
-
     }
 
     public void clientTick() {

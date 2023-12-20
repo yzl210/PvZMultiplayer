@@ -50,7 +50,7 @@ public class PacketManager {
         register(ServerboundStartGamePacket.class, ServerboundStartGamePacket::new);
         register(ClientboundUpdateWorldPacket.class, ClientboundUpdateWorldPacket::new);
         register(ServerboundPlantPacket.class, ServerboundPlantPacket::new);
-        register(ClientboundPlantPacket.class, ClientboundPlantPacket::new);
+        register(ClientboundAddEntityResultPacket.class, ClientboundAddEntityResultPacket::new);
         register(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new);
         register(ClientboundRemoveEntityPacket.class, ClientboundRemoveEntityPacket::new);
         register(ClientboundUpdateEntityPacket.class, ClientboundUpdateEntityPacket::new);
@@ -59,7 +59,8 @@ public class PacketManager {
         register(ClientboundPlaySoundPacket.class, ClientboundPlaySoundPacket::new);
         register(ServerboundShovelPacket.class, ServerboundShovelPacket::new);
         register(ClientboundShovelPacket.class, ClientboundShovelPacket::new);
-        register(ClientboundPlantSeedsCooldownPacket.class, ClientboundPlantSeedsCooldownPacket::new);
+        register(ClientboundEntityCooldownsPacket.class, ClientboundEntityCooldownsPacket::new);
+        register(ServerboundSpawnZombiePacket.class, ServerboundSpawnZombiePacket::new);
     }
 
 }

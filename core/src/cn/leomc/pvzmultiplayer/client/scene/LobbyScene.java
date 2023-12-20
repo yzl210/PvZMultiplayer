@@ -162,7 +162,7 @@ public class LobbyScene extends BaseScene {
         plantsGroup.addActor(plantsLabel);
 
         List<String> plantsTeamPlayerList = new List<>(getSkin());
-        plantsTeamPlayerList.setItems(gameSettings.getPlayers(Team.PLANTS).toArray(String[]::new));
+        plantsTeamPlayerList.setItems(gameSettings.getPlayersNames(Team.PLANTS).toArray(String[]::new));
         plantsGroup.addActor(plantsTeamPlayerList);
 
         TextButton joinPlantsButton = new TextButton("Join", getSkin());
@@ -191,7 +191,7 @@ public class LobbyScene extends BaseScene {
         zombiesGroup.addActor(zombiesLabel);
 
         List<String> zombiesTeamPlayerList = new List<>(getSkin());
-        zombiesTeamPlayerList.setItems(gameSettings.getPlayers(Team.ZOMBIES).toArray(String[]::new));
+        zombiesTeamPlayerList.setItems(gameSettings.getPlayersNames(Team.ZOMBIES).toArray(String[]::new));
         zombiesGroup.addActor(zombiesTeamPlayerList);
 
         TextButton joinZombiesButton = new TextButton("Join", getSkin());

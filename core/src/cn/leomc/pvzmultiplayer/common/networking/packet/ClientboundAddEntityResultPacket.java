@@ -2,14 +2,15 @@ package cn.leomc.pvzmultiplayer.common.networking.packet;
 
 import cn.leomc.pvzmultiplayer.client.SceneManager;
 import cn.leomc.pvzmultiplayer.client.scene.CollaborativeGameScene;
+import cn.leomc.pvzmultiplayer.client.scene.CompetitiveGameScene;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public record ClientboundPlantPacket(boolean success) implements Packet {
+public record ClientboundAddEntityResultPacket(boolean success) implements Packet {
 
 
-    public ClientboundPlantPacket(ByteBuf buf) {
+    public ClientboundAddEntityResultPacket(ByteBuf buf) {
         this(buf.readBoolean());
     }
 
@@ -22,7 +23,9 @@ public record ClientboundPlantPacket(boolean success) implements Packet {
     public void handle(ChannelHandlerContext ctx) {
         runLaterClient(() -> {
             if (SceneManager.get().getCurrentScene() instanceof CollaborativeGameScene scene)
-                scene.plantResult(success);
+                scene.getRenderer().addEntityResult(success);
+            if (SceneManager.get().getCurrentScene() instanceof CompetitiveGameScene scene)
+                scene.getRenderer().addEntityResult(success);
         });
     }
 }

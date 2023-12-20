@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.plants;
 
+import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityCreationContext;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Entity;
 import io.netty.buffer.ByteBuf;
 
@@ -8,7 +9,7 @@ public abstract class Plant extends Entity {
     protected PlantState state = PlantState.IDLE;
 
 
-    public Plant(PlantContext context) {
+    public Plant(EntityCreationContext context) {
         super(context);
     }
 

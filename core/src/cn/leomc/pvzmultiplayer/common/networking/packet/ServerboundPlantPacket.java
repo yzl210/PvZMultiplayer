@@ -24,8 +24,8 @@ public record ServerboundPlantPacket(PlantType<?> type, int x, int y) implements
     @Override
     public void handle(ChannelHandlerContext ctx) {
         runLaterServer(() -> {
-            boolean success = GameManager.get().getGameSession().getWorld().plant(x, y, type);
-            ctx.writeAndFlush(new ClientboundPlantPacket(success));
+            boolean success = GameManager.get().getGameSession().plant(getPlayer(ctx.channel()), x, y, type);
+            ctx.writeAndFlush(new ClientboundAddEntityResultPacket(success));
         });
     }
 }

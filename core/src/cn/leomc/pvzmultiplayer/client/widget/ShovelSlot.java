@@ -1,5 +1,6 @@
 package cn.leomc.pvzmultiplayer.client.widget;
 
+import cn.leomc.pvzmultiplayer.client.renderer.PlantGameRenderer;
 import cn.leomc.pvzmultiplayer.client.texture.FixedTexture;
 import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -8,18 +9,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-
 public class ShovelSlot extends Actor {
 
-    private final BooleanSupplier selected;
+    private final PlantGameRenderer renderer;
     private final Renderable emptySlot;
     private final Renderable slot;
 
-    public ShovelSlot(BooleanSupplier selected, Consumer<Boolean> select) {
+    public ShovelSlot(PlantGameRenderer renderer) {
         setSize(70, 44);
-        this.selected = selected;
+        this.renderer = renderer;
 
         this.emptySlot = new FixedTexture("textures/shovel_slot_empty.png");
         this.slot = new FixedTexture("textures/shovel_slot.png");
@@ -28,7 +26,7 @@ public class ShovelSlot extends Actor {
         addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                select.accept(!selected.getAsBoolean());
+                renderer.selectShovel(!renderer.isShovelSelected());
             }
         });
     }
@@ -36,7 +34,7 @@ public class ShovelSlot extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
-        (selected.getAsBoolean() ? emptySlot : slot).render(getX(), getY(), getWidth(), getHeight());
+        (renderer.isShovelSelected() ? emptySlot : slot).render(getX(), getY(), getWidth(), getHeight());
         batch.begin();
     }
 }

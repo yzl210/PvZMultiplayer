@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.common.game.content.entity.zombie;
 
 import cn.leomc.pvzmultiplayer.client.texture.AnimatedTexture;
+import cn.leomc.pvzmultiplayer.common.Utils;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityManager;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.zombies.NormalZombie;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -11,6 +12,7 @@ public class Zombies {
     public static final ZombieType<Zombie> NORMAL = ZombieType.builder()
             .id("normal")
             .sun(50)
+            .eggRechargeTicks(Utils.millisToTicks(3000))
             .health(10)
             .damage(1)
             .speed(new Vector2(-1f, 0))
@@ -22,7 +24,6 @@ public class Zombies {
             .dimension(ZombieState.EATING_HALF_HEALTH, new Vector2(31 * 3, 44 * 3))
             .dimension(ZombieState.EATING_DYING, new Vector2(30 * 3, 30 * 3))
             .dimension(ZombieState.DEAD, new Vector2(43 * 3, 31 * 3))
-            .eggRechargeTicks(750)
             .texture(ZombieState.IDLE, 5)
             .texture(ZombieState.WALKING, 7)
             .texture(ZombieState.WALKING_HALF_HEALTH, 7)

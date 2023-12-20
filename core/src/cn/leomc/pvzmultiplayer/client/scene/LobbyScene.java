@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.Constants;
+import cn.leomc.pvzmultiplayer.client.renderer.CursorRenderer;
 import cn.leomc.pvzmultiplayer.client.widget.HorizontalLabeledTextField;
 import cn.leomc.pvzmultiplayer.common.game.GameSettings;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
@@ -29,6 +30,8 @@ public class LobbyScene extends BaseScene {
     private TextButton startButton;
 
     private final ArrayList<Consumer<GameSettings>> settingsListeners = new ArrayList<>();
+
+    private CursorRenderer cursorRenderer;
 
     @Override
     public void create() {
@@ -89,6 +92,24 @@ public class LobbyScene extends BaseScene {
         gameSettingsLabel.setFontScale(2);
         rightGroup.addActor(gameSettingsLabel);
 
+        HorizontalLabeledTextField initialSun = new HorizontalLabeledTextField("Initial Sun: ", "", getSkin());
+        settingsListeners.add(settings -> initialSun.getTextField().setText(String.valueOf(settings.initialSun)));
+        initialSun.getTextField().addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                try {
+                    int sun = Integer.parseInt(initialSun.getText());
+                    runLater(() -> {
+                        ClientGameManager.get().getGameSettings().initialSun = sun;
+                        ClientGameManager.get().sendGameSettings();
+                    });
+                } catch (NumberFormatException e) {
+                    event.cancel();
+                }
+            }
+        });
+        rightGroup.addActor(initialSun);
+
         HorizontalLabeledTextField sunAmount = new HorizontalLabeledTextField("Sun Amount: ", "", getSkin());
         settingsListeners.add(settings -> sunAmount.getTextField().setText(String.valueOf(settings.sunAmount)));
         sunAmount.getTextField().addListener(new ChangeListener() {
@@ -134,6 +155,8 @@ public class LobbyScene extends BaseScene {
         rightGroup.addActor(startButton);
 
         settingsListeners.forEach(listener -> listener.accept(ClientGameManager.get().getGameSettings()));
+
+        cursorRenderer = new CursorRenderer();
     }
 
     private void collaboration(Group leftGroup) {
@@ -218,6 +241,7 @@ public class LobbyScene extends BaseScene {
         batch.end();
         stage.draw();
         stage.act();
+        cursorRenderer.render();
     }
 
     @Override

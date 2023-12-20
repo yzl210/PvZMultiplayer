@@ -91,6 +91,7 @@ public class PvZMultiplayerClient extends ApplicationAdapter {
         PvZMultiplayerServer.stop();
         batch.dispose();
         font.dispose();
+        skin.dispose();
         System.exit(0);
     }
 

@@ -14,7 +14,7 @@ public record ClientboundPlaySoundPacket(String sound) implements Packet {
 
     @Override
     public void write(ByteBuf buf) {
-        ByteBufUtils.writeString(sound, buf);
+        ByteBufUtils.writeString(buf, sound);
     }
 
     @Override

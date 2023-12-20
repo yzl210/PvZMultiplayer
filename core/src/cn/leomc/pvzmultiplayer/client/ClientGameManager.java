@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client;
 
 import cn.leomc.pvzmultiplayer.client.networking.ClientConnection;
+import cn.leomc.pvzmultiplayer.client.renderer.GameRenderer;
 import cn.leomc.pvzmultiplayer.client.scene.CollaborativeGameScene;
 import cn.leomc.pvzmultiplayer.client.scene.CompetitiveGameScene;
 import cn.leomc.pvzmultiplayer.client.scene.LobbyScene;
@@ -12,12 +13,15 @@ import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import cn.leomc.pvzmultiplayer.common.game.content.world.World;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.CompetitiveGameSettings;
 import cn.leomc.pvzmultiplayer.common.game.logic.competitive.Team;
+import cn.leomc.pvzmultiplayer.common.networking.packet.ServerboundCursorPositionPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ServerboundGameSettingsPacket;
 import cn.leomc.pvzmultiplayer.common.server.PvZMultiplayerServer;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class ClientGameManager extends EventLoop {
 
@@ -34,6 +38,7 @@ public class ClientGameManager extends EventLoop {
     private int sun;
     private final World world = new World(null);
     private final Map<EntityType<?, ?>, Integer> entityCooldowns = new HashMap<>();
+    private final Map<String, Vector2> cursors = new ConcurrentSkipListMap<>();
 
     public ClientGameManager() {
         clientTickThread.start();
@@ -158,6 +163,8 @@ public class ClientGameManager extends EventLoop {
     public void tick() {
         super.tick();
         world.clientTick();
+        if (isConnected())
+            connection.sendPacket(new ServerboundCursorPositionPacket(GameRenderer.getMousePosition()));
     }
 
     public World getWorld() {
@@ -185,4 +192,12 @@ public class ClientGameManager extends EventLoop {
         return entityCooldowns.getOrDefault(entity, 0);
     }
 
+    public void setCursors(Map<String, Vector2> cursors) {
+        this.cursors.clear();
+        this.cursors.putAll(cursors);
+    }
+
+    public Map<String, Vector2> getCursors() {
+        return cursors;
+    }
 }

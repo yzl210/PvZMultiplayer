@@ -3,6 +3,7 @@ package cn.leomc.pvzmultiplayer.common.server;
 import cn.leomc.pvzmultiplayer.common.game.GameManager;
 import cn.leomc.pvzmultiplayer.common.networking.Packet;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundPlayerListPacket;
+import com.badlogic.gdx.math.Vector2;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
@@ -16,6 +17,7 @@ public class PlayerList {
 
     private final ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     private final Map<Channel, ServerPlayer> players = new HashMap<>();
+    private final Map<ServerPlayer, Vector2> cursors = new HashMap<>();
 
     public ServerPlayer addPlayer(Channel channel, String name) {
         ServerPlayer player = new ServerPlayer(name, channel);
@@ -33,6 +35,7 @@ public class PlayerList {
     public void removePlayer(Channel channel) {
         GameManager.get().onRemovePlayer(getPlayer(channel));
         players.remove(channel);
+        cursors.remove(getPlayer(channel));
         channelGroup.remove(channel);
         channel.close();
         syncPlayers();
@@ -56,5 +59,14 @@ public class PlayerList {
 
     public void syncPlayers() {
         sendPacket(new ClientboundPlayerListPacket());
+    }
+
+    public Map<ServerPlayer, Vector2> getCursors() {
+        return cursors;
+    }
+
+    public void setCursor(ServerPlayer player, Vector2 cursor) {
+        if (player != null)
+            cursors.put(player, cursor);
     }
 }

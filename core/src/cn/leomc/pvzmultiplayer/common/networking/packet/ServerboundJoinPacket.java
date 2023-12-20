@@ -18,7 +18,7 @@ public record ServerboundJoinPacket(String name) implements Packet {
 
     @Override
     public void write(ByteBuf buf) {
-        ByteBufUtils.writeString(name, buf);
+        ByteBufUtils.writeString(buf, name);
     }
 
     @Override

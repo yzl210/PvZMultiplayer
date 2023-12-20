@@ -61,6 +61,8 @@ public class PacketManager {
         register(ClientboundShovelPacket.class, ClientboundShovelPacket::new);
         register(ClientboundEntityCooldownsPacket.class, ClientboundEntityCooldownsPacket::new);
         register(ServerboundSpawnZombiePacket.class, ServerboundSpawnZombiePacket::new);
+        register(ClientboundCursorPositionPacket.class, ClientboundCursorPositionPacket::new);
+        register(ServerboundCursorPositionPacket.class, ServerboundCursorPositionPacket::new);
     }
 
 }

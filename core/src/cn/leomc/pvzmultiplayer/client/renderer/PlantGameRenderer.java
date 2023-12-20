@@ -6,7 +6,6 @@ import cn.leomc.pvzmultiplayer.client.texture.Renderable;
 import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.PlantType;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.plants.Plants;
 import cn.leomc.pvzmultiplayer.common.game.content.world.Map;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ServerboundPlantPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ServerboundShovelPacket;
@@ -23,10 +22,7 @@ public class PlantGameRenderer extends GameRenderer {
 
     public PlantGameRenderer(Stage stage) {
         super(stage);
-        bar.addEntity(Plants.SUNFLOWER);
-        bar.addEntity(Plants.PEASHOOTER);
-        bar.addEntity(Plants.WALLNUT);
-
+        ClientGameManager.get().getGameSettings().plants.forEach(bar::addEntity);
         shovel = new FixedTexture("textures/shovel.png");
     }
 

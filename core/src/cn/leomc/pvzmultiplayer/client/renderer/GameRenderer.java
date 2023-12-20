@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.renderer;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.client.PvZMultiplayerClient;
 import cn.leomc.pvzmultiplayer.client.widget.Bar;
 import cn.leomc.pvzmultiplayer.common.game.audio.Sounds;
@@ -27,7 +28,7 @@ public abstract class GameRenderer extends InputAdapter {
 
         bar = new Bar(this, PvZMultiplayerClient.getInstance().getSkin());
         bar.setScale(0.9f);
-        bar.setPosition(0, Gdx.graphics.getHeight() - bar.getHeight() * 0.9f);
+        bar.setPosition(0, Constants.HEIGHT - bar.getHeight() * 0.9f);
         stage.addActor(bar);
     }
 
@@ -108,7 +109,7 @@ public abstract class GameRenderer extends InputAdapter {
 
     public abstract int getCooldown(EntityType<?, ?> entity);
 
-    public Vector2 getMousePosition() {
+    public static Vector2 getMousePosition() {
         return PvZMultiplayerClient.getInstance().getViewport().unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
     }
 

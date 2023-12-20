@@ -32,7 +32,7 @@ public abstract class GameSession<S extends GameSettings> {
 
     public GameSession(S settings) {
         this.settings = settings;
-        setSun(5000);
+        setSun(settings.initialSun);
     }
 
     public static GameSession<?> create(GameSettings settings) {
@@ -90,7 +90,7 @@ public abstract class GameSession<S extends GameSettings> {
     }
 
     public boolean plant(ServerPlayer player, int x, int y, PlantType<?> type) {
-        if (!world.canPlant(x, y) || getSun() < type.sun() || getCooldown(type) > 0 || !canPlayerPlant(player))
+        if (!settings.plants.contains(type) || !world.canPlant(x, y) || getSun() < type.sun() || getCooldown(type) > 0 || !canPlayerPlant(player))
             return false;
 
         addCooldown(type);

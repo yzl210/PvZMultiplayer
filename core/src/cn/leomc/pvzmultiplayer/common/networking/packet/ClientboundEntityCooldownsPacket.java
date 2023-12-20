@@ -34,7 +34,7 @@ public class ClientboundEntityCooldownsPacket implements Packet {
     public void write(ByteBuf buf) {
         buf.writeInt(entityCooldowns.size());
         entityCooldowns.forEach((plantType, cooldown) -> {
-            ByteBufUtils.writeString(plantType.id(), buf);
+            ByteBufUtils.writeString(buf, plantType.id());
             buf.writeInt(cooldown);
         });
     }

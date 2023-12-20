@@ -1,6 +1,7 @@
 package cn.leomc.pvzmultiplayer.client.scene;
 
 import cn.leomc.pvzmultiplayer.client.ClientGameManager;
+import cn.leomc.pvzmultiplayer.client.renderer.CursorRenderer;
 import cn.leomc.pvzmultiplayer.client.renderer.GameRenderer;
 import cn.leomc.pvzmultiplayer.client.renderer.PlantGameRenderer;
 import cn.leomc.pvzmultiplayer.client.renderer.ZombieGameRenderer;
@@ -13,6 +14,7 @@ public class CompetitiveGameScene extends BaseScene {
 
     private final Team team;
     private GameRenderer renderer;
+    private CursorRenderer cursorRenderer;
 
     public CompetitiveGameScene(Team team) {
         this.team = team;
@@ -27,11 +29,14 @@ public class CompetitiveGameScene extends BaseScene {
 
         renderer = team == Team.PLANTS ? new PlantGameRenderer(createStage()) : new ZombieGameRenderer(createStage());
         getInputMultiplexer().addProcessor(renderer);
+
+        cursorRenderer = new CursorRenderer();
     }
 
     @Override
     public void render() {
         renderer.render();
+        cursorRenderer.render();
     }
 
     @Override

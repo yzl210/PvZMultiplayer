@@ -26,8 +26,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 import io.netty.buffer.ByteBuf;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 public class World {
@@ -167,14 +167,20 @@ public class World {
         batch.begin();
         background.draw(batch, 0, 0, Constants.WIDTH, Constants.HEIGHT - 75);
         batch.end();
-        entities.values().forEach(entity -> {
-            try {
-                entity.render();
-            } catch (Exception e) {
-                System.err.println("Error rendering entity " + entity.id() + ", " + entity.type().id());
-                e.printStackTrace();
-            }
-        });
+
+        List<Entity> renderList = new ArrayList<>(entities.values());
+
+        renderList.sort(Comparator.comparingInt(Entity::getRow).reversed()
+                .thenComparingInt(entity -> {
+                    if (entity instanceof Plant)
+                        return 1;
+                    if (entity instanceof Zombie)
+                        return 2;
+                    return 3;
+                }));
+
+        renderList.forEach(Entity::render);
+
         clientEntities.values().forEach(Entity::render);
     }
 

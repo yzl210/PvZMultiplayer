@@ -18,7 +18,7 @@ public record ServerboundSpawnZombiePacket(ZombieType<?> zombie, int lane) imple
 
     @Override
     public void write(ByteBuf buf) {
-        ByteBufUtils.writeString(zombie.id(), buf);
+        ByteBufUtils.writeString(buf, zombie.id());
         buf.writeInt(lane);
     }
 

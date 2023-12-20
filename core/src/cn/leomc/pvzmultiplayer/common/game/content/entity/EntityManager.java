@@ -25,7 +25,7 @@ public class EntityManager {
         EntityType<?, ?> type = ENTITY_TYPES.get(id);
         if (type == null)
             throw new IllegalArgumentException("Unknown entity type id: " + id);
-        ByteBufUtils.writeString(id, buf);
+        ByteBufUtils.writeString(buf, id);
         entity.write(buf);
     }
 

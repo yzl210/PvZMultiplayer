@@ -2,6 +2,7 @@ package cn.leomc.pvzmultiplayer.common.game;
 
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
 import cn.leomc.pvzmultiplayer.common.game.logic.collaborative.CollaborativeGameSettings;
+import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundCursorPositionPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundGameSettingsPacket;
 import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundGameStartPacket;
 import cn.leomc.pvzmultiplayer.common.server.PvZMultiplayerServer;
@@ -20,6 +21,8 @@ public class GameManager {
             settings = new CollaborativeGameSettings();
         if (state == GameState.IN_GAME && session != null)
             session.tick();
+        else
+            ServerManager.get().sendPacket(new ClientboundCursorPositionPacket(ServerManager.get().getPlayerList().getCursors()));
     }
 
     public void onAddPlayer(ServerPlayer player) {

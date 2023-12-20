@@ -41,6 +41,8 @@ public class PvZMultiplayerServer extends EventLoop {
 
     @Override
     public void tick() {
+        if (getInstance() == null)
+            return;
         if (serverManager == null)
             serverManager = new ServerManager();
         gameManager.tick();

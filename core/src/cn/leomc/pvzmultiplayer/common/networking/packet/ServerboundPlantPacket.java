@@ -16,7 +16,7 @@ public record ServerboundPlantPacket(PlantType<?> type, int x, int y) implements
 
     @Override
     public void write(ByteBuf buf) {
-        ByteBufUtils.writeString(type.id(), buf);
+        ByteBufUtils.writeString(buf, type.id());
         buf.writeInt(x);
         buf.writeInt(y);
     }

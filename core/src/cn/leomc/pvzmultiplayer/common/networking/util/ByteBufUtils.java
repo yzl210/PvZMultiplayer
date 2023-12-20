@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 public class ByteBufUtils {
 
-    public static void writeString(String string, ByteBuf buf) {
+    public static void writeString(ByteBuf buf, String string) {
         buf.writeInt(string.length());
         buf.writeCharSequence(string, StandardCharsets.UTF_8);
     }
@@ -23,10 +23,10 @@ public class ByteBufUtils {
     public static void writeComponent(Component component, ByteBuf buf) {
         if (component instanceof TextComponent text) {
             buf.writeByte(0);
-            writeString(text.get(), buf);
+            writeString(buf, text.get());
         } else if (component instanceof TranslatableComponent translatable) {
             buf.writeByte(1);
-            writeString(translatable.getKey(), buf);
+            writeString(buf, translatable.getKey());
         }
     }
 

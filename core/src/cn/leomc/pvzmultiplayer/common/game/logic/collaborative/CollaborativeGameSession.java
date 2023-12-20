@@ -1,7 +1,8 @@
 package cn.leomc.pvzmultiplayer.common.game.logic.collaborative;
 
-import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombies;
 import cn.leomc.pvzmultiplayer.common.game.logic.GameSession;
+import cn.leomc.pvzmultiplayer.common.networking.packet.ClientboundCursorPositionPacket;
+import cn.leomc.pvzmultiplayer.common.server.ServerManager;
 import cn.leomc.pvzmultiplayer.common.server.ServerPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,7 +20,9 @@ public class CollaborativeGameSession extends GameSession<CollaborativeGameSetti
         super.tick();
         timer++;
         if (timer % 100 == 0)
-            world.spawnZombie(Zombies.NORMAL, ThreadLocalRandom.current().nextInt(5));
+            world.spawnZombie(settings.zombies.get(ThreadLocalRandom.current().nextInt(settings.zombies.size())), ThreadLocalRandom.current().nextInt(5));
+
+        ServerManager.get().sendPacket(new ClientboundCursorPositionPacket(ServerManager.get().getPlayerList().getCursors()));
     }
 
     @Override

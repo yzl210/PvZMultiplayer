@@ -11,11 +11,13 @@ import io.netty.buffer.ByteBuf;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CompetitiveGameSettings extends GameSettings {
 
     private final Multimap<Team, String> playerTeam = HashMultimap.create();
+
 
     public CompetitiveGameSettings() {
     }
@@ -41,7 +43,7 @@ public class CompetitiveGameSettings extends GameSettings {
     }
 
     public List<ServerPlayer> getPlayers(Team team) {
-        return getPlayersNames(team).stream().map(ServerManager.get().getPlayerList()::getPlayer).toList();
+        return getPlayersNames(team).stream().map(ServerManager.get().getPlayerList()::getPlayer).filter(Objects::nonNull).toList();
     }
 
     public Team getTeam(String player) {
@@ -75,7 +77,7 @@ public class CompetitiveGameSettings extends GameSettings {
         playerTeam.forEach((team, player) -> {
             i.getAndIncrement();
             buf.writeInt(team.ordinal());
-            ByteBufUtils.writeString(player, buf);
+            ByteBufUtils.writeString(buf, player);
         });
     }
 

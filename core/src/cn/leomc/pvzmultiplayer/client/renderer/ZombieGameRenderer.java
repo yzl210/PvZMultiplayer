@@ -4,7 +4,6 @@ import cn.leomc.pvzmultiplayer.client.ClientGameManager;
 import cn.leomc.pvzmultiplayer.client.Constants;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.EntityType;
 import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.ZombieType;
-import cn.leomc.pvzmultiplayer.common.game.content.entity.zombie.Zombies;
 import cn.leomc.pvzmultiplayer.common.networking.packet.world.ServerboundSpawnZombiePacket;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -14,8 +13,7 @@ public class ZombieGameRenderer extends GameRenderer {
 
     public ZombieGameRenderer(Stage stage) {
         super(stage);
-
-        bar.addEntity(Zombies.NORMAL);
+        ClientGameManager.get().getGameSettings().zombies.forEach(bar::addEntity);
     }
 
     @Override

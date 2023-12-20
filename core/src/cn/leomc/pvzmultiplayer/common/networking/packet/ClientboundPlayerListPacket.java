@@ -31,7 +31,7 @@ public class ClientboundPlayerListPacket implements Packet {
     @Override
     public void write(ByteBuf buf) {
         buf.writeInt(players.size());
-        players.forEach(player -> ByteBufUtils.writeString(player, buf));
+        players.forEach(player -> ByteBufUtils.writeString(buf, player));
     }
 
     @Override
